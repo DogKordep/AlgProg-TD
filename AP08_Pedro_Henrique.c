@@ -1,7 +1,7 @@
 #include "raylib.h"
 #include <string.h>
 
-#define LARGURA 600
+#define LARGURA 1200
 #define ALTURA 600
 
 int main(void){
@@ -30,8 +30,9 @@ int y = 300, x = 300;
   //DrawText(texto, x, y, 40, GREEN);//Desenha um texto, com posição, tamanho e cor
   EndDrawing();//Finaliza o ambiente de desenho na tela
   //----------------------------------------------------------------------------------
-  if(x>600 || x<0 || y>600 || y<0)
+  if(x>1200 || x<0 || y>600 || y<0)
     CloseWindow();
+    ShowCursor();
  }
  CloseWindow();// Fecha a janela e o contexto OpenGL
 return 0;
