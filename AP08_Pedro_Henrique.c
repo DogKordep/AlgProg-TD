@@ -16,11 +16,7 @@ int main(void)
 
     int y = 300, x = 600;
     int a,n,r=0;
-
-
-
-
-//char texto[50] = {"Recursos: %i",r};//texto inicial
+//char texto[50] = {"Recursos: %d",r};//texto inicial
 //--------------------------------------------------------------------------------------
 //Inicializações
     InitWindow(LARGURA, ALTURA, "Quadrado");//Inicializa janela, com certo tamanho e título
@@ -44,23 +40,25 @@ int main(void)
                     DrawRectangle(20*n, 20*a, 20, 20, GREEN);
                 if(matriz[a][n] == 0)
                     DrawRectangle(20*n, 20*a, 20, 20, RED);
+                if(matriz[a][n] == 2)
+                    DrawRectangle(20*n, 20*a, 20, 20, BLACK);
             }
         }
 
-    if(x==1000 && y==200){
-        r=r+1;
-    }
+        if(matriz[y/20][x/20]==1)
+        {
+            r=r+1;
+        }
 
-    if(IsKeyPressed(KEY_G)){
-        if(r>0)
-            matriz[y/20][x/20] = 1;
-    }
-
-
-
-
-
-
+        if(IsKeyPressed(KEY_G))
+        {
+            if(r>0)
+            {
+                matriz[y/20][x/20] = 2;
+                r=r-1;
+            }
+        }
+        printf("Recursos: %d\n",r);
         //----------------------------------------------------------------------------------
         // Atualiza a representação visual a partir do estado do jogo
         //----------------------------------------------------------------------------------
