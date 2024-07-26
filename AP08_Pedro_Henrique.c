@@ -1,12 +1,15 @@
-  #include "raylib.h"
+#include "raylib.h"
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
 
-#define LARGURA 1200
-#define ALTURA 600
+#define LARGURA 800
+#define ALTURA 450
 #define LARGURA_matriz 60
 #define ALTURA_matriz 30
+
+typedef enum GameScreen { LOGO = 0, TITLE, GAMEPLAY, ENDING } GameScreen;
+
 
 int deveMover(int x, int y, int dx, int dy, int larg, int alt)
 {
@@ -31,19 +34,28 @@ int main(void)
     int matriz[ALTURA_matriz][LARGURA_matriz]= {};
     matriz[10][50] = 1;
     matriz[25][10] = 1;
-    //int framesCounter = 0;
+
 
     int y = 300, x = 600, y2 = 300, x2 = 600;
     int a,n,r=0,dx=0,dy=0;
     int dx2 = GetRandomValue(-1, 1);
     int dy2 = GetRandomValue(-1, 1);
+    GameScreen currentScreen = LOGO;
+    int framesCounter = 0;
 //char texto[50] = {"Recursos: %d",r};//texto inicial
 //--------------------------------------------------------------------------------------
 //Inicializações
+
     InitWindow(LARGURA, ALTURA, "Quadrado");//Inicializa janela, com certo tamanho e título
     SetTargetFPS(60);// Ajusta a execução do jogo para 60 frames por segundo
 //--------------------------------------------------------------------------------------
 //Laço principal do jogo
+
+    BeginDrawing();
+    DrawText("LOGO SCREEN", 20, 20, 40, LIGHTGRAY);
+    DrawText("WAIT for 2 SECONDS...", 100, 100, 20, GRAY);
+    WaitTime(1);
+
 
 
 
@@ -52,7 +64,11 @@ int main(void)
 
     while (!WindowShouldClose()) // Detect window close button or ESC key
     {
-        ClearBackground(RAYWHITE);
+
+        //tela();
+
+
+        //ClearBackground(RAYWHITE);
         // Trata entrada do usuário e atualiza estado do jogo
         dx2 = GetRandomValue(-1, 1);
         dy2 = GetRandomValue(-1, 1);
@@ -102,7 +118,7 @@ int main(void)
         BeginDrawing();//Inicia o ambiente de desenho na tela
         DrawRectangle(x, y, 20, 20, GREEN);
         DrawRectangle(x2,y2, 20, 20, RED);
-        ClearBackground(RAYWHITE);//Limpa a tela e define cor de fundo
+        //ClearBackground(RAYWHITE);//Limpa a tela e define cor de fundo
         //DrawText(texto, 200, 200, 40, GREEN);//Desenha um texto, com posição, tamanho e cor
         EndDrawing();//Finaliza o ambiente de desenho na tela
         //----------------------------------------------------------------------------------
@@ -115,7 +131,43 @@ int main(void)
 }
 
 
-void tela()
+/*void tela()
 {
+    switch(currentScreen)
+    {
+    case LOGO:
+    {
+        framesCounter++;    // Count frames
+        if (framesCounter > 120)
+        {
+            currentScreen = TITLE;
+        }
+        DrawText("LOGO SCREEN", 20, 20, 40, LIGHTGRAY);
+        DrawText("WAIT for 2 SECONDS...", 290, 220, 20, GRAY);
+    }
+    break;
+    case TITLE:
+    {
+        if (IsKeyPressed(KEY_ENTER) || IsGestureDetected(GESTURE_TAP))
+        {
+            currentScreen = GAMEPLAY;
+        }
+        DrawRectangle(0, 0, LARGURA, ALTURA, GREEN);
+        DrawText("TITLE SCREEN", 20, 20, 40, DARKGREEN);
+        DrawText("PRESS ENTER or TAP to JUMP to GAMEPLAY SCREEN", 120, 220, 20, DARKGREEN);
 
-}
+
+    }
+    break;
+    case GAMEPLAY:
+    {
+
+    } break;
+    case ENDING:
+    {
+
+    } break;
+    default:
+        break;
+    }
+}*/
