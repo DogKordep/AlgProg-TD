@@ -51,23 +51,24 @@ int deveMover(int x, int y, int dx, int dy, int x_ant , int y_ant , int larg, in
     return 1;
 }
 
-int moveInimigo( INIMIGO *Inimigo,int largura, int altura){
+int moveInimigo( INIMIGO *Inimigo,int largura, int altura, double tempo){
     int p;
-   // if
-    Inimigo->x += Inimigo->dx*1;
-    Inimigo->y += Inimigo->dy*1;
+    if(fmod(tempo , 2) < 0.016 ){
+    Inimigo->x += Inimigo->dx*20;
+    Inimigo->y += Inimigo->dy*20;
 
     p = deveMover(Inimigo->x,Inimigo->y,Inimigo->dx,Inimigo->dy, Inimigo->x_ant ,   Inimigo->y_ant ,largura,altura);
 
     Inimigo->x_ant = Inimigo->x;
     Inimigo->y_ant = Inimigo->y;
     return p;
+    }
 }
 
 void iniciaDesloc(INIMIGO *Inimigo, int ddx,int ddy){
 
-    Inimigo->dx = GetRandomValue(-1, 1);
-    Inimigo->dy = GetRandomValue(-1, 1);
+    Inimigo->dx = 0;//GetRandomValue(-1, 1);
+    Inimigo->dy = -1;//GetRandomValue(-1, 1);
     Inimigo->x = ddx;
     Inimigo->y = ddy;
     while((Inimigo->dx ==0 && Inimigo->dy == 0)){
@@ -106,7 +107,7 @@ int main(void)
 {
     struct pos_J J = {0.0, 0.0};  // Inicializa a posição de J
 
-
+    double time = 0;
     int i=0, n, p;
     int ddx=0,ddy=0; //localização onde nasce os inimigos
     int bbx=0,bby=0; // localização da base
@@ -125,6 +126,8 @@ int main(void)
 
     while (!WindowShouldClose()){
 
+        time = GetTime();
+
         DesenhaMapa(mapa);
 
         MovimentoJogador(&J, mapa);
@@ -137,15 +140,15 @@ int main(void)
         DrawRectangle(J.x, J.y, LARGURA_BLOCO, ALTURA_BLOCO, DARKBLUE);
 
         for(int i=0; i<MAX_INIMIGOS; i++){
-            moveInimigo(&inimigos[i], ALTURA, LARGURA);
-            n = moveInimigo(&inimigos[i], ALTURA, LARGURA);
-            if(moveInimigo(&inimigos[i], ALTURA, LARGURA ) != 1) redefineDeslocamento(&inimigos[i],n);
-            DrawRectangle(inimigos[i].x, inimigos[i].y, 20, 20, ORANGE);
+            moveInimigo(&inimigos[i], ALTURA, LARGURA, time);
+            n = moveInimigo(&inimigos[i], ALTURA, LARGURA, time);
+            if(moveInimigo(&inimigos[i], ALTURA, LARGURA, time ) != 1) redefineDeslocamento(&inimigos[i],n);
+            DrawRectangle(inimigos[i].x, inimigos[i].y, ALTURA_BLOCO, LARGURA_BLOCO, ORANGE);
         }
 
         EndDrawing();
 
-        printf("%c", mapa[0][0]);
+        //printf("%c", mapa[0][0]);
     }
 
     CloseWindow();
