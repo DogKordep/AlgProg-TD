@@ -20,13 +20,13 @@
 
 char mapa[ALTURA_MAPA][LARGURA_MAPA];
 
-struct pos_J
+struct pos_J  //estrutura para o jogador
 {
     float x;
     float y;
 };
 
-typedef struct Inimigo{
+typedef struct Inimigo{   //estrutura para o inimigo
     int x;
     int y;
     int dx;
@@ -35,25 +35,18 @@ typedef struct Inimigo{
     int y_ant;
 } INIMIGO;
 
-int deveMover(int x, int y, int dx, int dy, int x_ant , int y_ant , int larg, int alt)
+int deveMover(int x, int y, int dx, int dy, int x_ant , int y_ant , int larg, int alt) //funçãp para ver se inimigo pode continuar seu rumo atual
 {
     if(x+1*dx > (larg-20)) return 0;
     if(x+1*dx < 0) return 2;
     if(y+1*dy > (alt-20)) return 3;
     if(y+1*dy < 0) return 4;
-    //if(mapa[x/20][y/20] == 'W'){
-    //        return 0;
-        //if( (x - x_ant) > 0) return 0;
-        //else if((x - x_ant) < 0) return 2;
-        //else if((y - y_ant) > 0) return 3;
-        //else if((y - y_ant) < 0) return 4;
-    //}
     return 1;
 }
 
 int moveInimigo( INIMIGO *Inimigo,int largura, int altura, double tempo){
     int p;
-    if(fmod(tempo , 2) < 0.016 ){
+    if(fmod(tempo , 2) < 0.016 ){     //função da math.h para pegar resto de divisão de numeros com virgula
     Inimigo->x += Inimigo->dx*20;
     Inimigo->y += Inimigo->dy*20;
 
@@ -126,7 +119,7 @@ int main(void)
 
     while (!WindowShouldClose()){
 
-        time = GetTime();
+        time = GetTime();     //função raylib que pega o tempo desde de que a janela foi aberta
 
         DesenhaMapa(mapa);
 
@@ -139,7 +132,7 @@ int main(void)
 
         DrawRectangle(J.x, J.y, LARGURA_BLOCO, ALTURA_BLOCO, DARKBLUE);
 
-        for(int i=0; i<MAX_INIMIGOS; i++){
+        for(int i=0; i<MAX_INIMIGOS; i++){        //laço que atualiza a posição dos inimigos, testa a sua posição e desanha cada 1
             moveInimigo(&inimigos[i], ALTURA, LARGURA, time);
             n = moveInimigo(&inimigos[i], ALTURA, LARGURA, time);
             if(moveInimigo(&inimigos[i], ALTURA, LARGURA, time ) != 1) redefineDeslocamento(&inimigos[i],n);
