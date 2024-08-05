@@ -26,7 +26,8 @@ struct pos_J  //estrutura para o jogador
     float y;
 };
 
-typedef struct Inimigo{   //estrutura para o inimigo
+typedef struct Inimigo    //estrutura para o inimigo
+{
     int x;
     int y;
     int dx;
@@ -35,7 +36,7 @@ typedef struct Inimigo{   //estrutura para o inimigo
     int y_ant;
 } INIMIGO;
 
-int deveMover(int x, int y, int dx, int dy, int x_ant , int y_ant , int larg, int alt) //funçãp para ver se inimigo pode continuar seu rumo atual
+int deveMover(int x, int y, int dx, int dy, int x_ant, int y_ant, int larg, int alt)   //funçãp para ver se inimigo pode continuar seu rumo atual
 {
     if(x+1*dx > (larg-20)) return 0;
     if(x+1*dx < 0) return 2;
@@ -44,27 +45,31 @@ int deveMover(int x, int y, int dx, int dy, int x_ant , int y_ant , int larg, in
     return 1;
 }
 
-int moveInimigo( INIMIGO *Inimigo,int largura, int altura, double tempo){
+int moveInimigo( INIMIGO *Inimigo,int largura, int altura, double tempo)
+{
     int p;
-    if(fmod(tempo , 2) < 0.016 ){     //função da math.h para pegar resto de divisão de numeros com virgula
-    Inimigo->x += Inimigo->dx*20;
-    Inimigo->y += Inimigo->dy*20;
+    if(fmod(tempo, 2) < 0.016 )       //função da math.h para pegar resto de divisão de numeros com virgula
+    {
+        Inimigo->x += Inimigo->dx*20;
+        Inimigo->y += Inimigo->dy*20;
 
-    p = deveMover(Inimigo->x,Inimigo->y,Inimigo->dx,Inimigo->dy, Inimigo->x_ant ,   Inimigo->y_ant ,largura,altura);
+        p = deveMover(Inimigo->x,Inimigo->y,Inimigo->dx,Inimigo->dy, Inimigo->x_ant,Inimigo->y_ant,largura,altura);
 
-    Inimigo->x_ant = Inimigo->x;
-    Inimigo->y_ant = Inimigo->y;
-    return p;
+        Inimigo->x_ant = Inimigo->x;
+        Inimigo->y_ant = Inimigo->y;
+        return p;
     }
 }
 
-void iniciaDesloc(INIMIGO *Inimigo, int ddx,int ddy){
+void iniciaDesloc(INIMIGO *Inimigo, int ddx,int ddy)
+{
 
-    Inimigo->dx = 0;//GetRandomValue(-1, 1);
-    Inimigo->dy = -1;//GetRandomValue(-1, 1);
+    Inimigo->dx = -1;//GetRandomValue(-1, 1);
+    Inimigo->dy = 0;//GetRandomValue(-1, 1);
     Inimigo->x = ddx;
     Inimigo->y = ddy;
-    while((Inimigo->dx ==0 && Inimigo->dy == 0)){
+    while((Inimigo->dx ==0 && Inimigo->dy == 0))
+    {
         Inimigo->dx = GetRandomValue(-1, 1);
         Inimigo->dy = GetRandomValue(-1, 1);
     }
@@ -72,7 +77,8 @@ void iniciaDesloc(INIMIGO *Inimigo, int ddx,int ddy){
 
 void redefineDeslocamento(INIMIGO *Inimigo, int p)
 {
-    switch(p){
+    switch(p)
+    {
     case 0:
         Inimigo->dx = GetRandomValue(-1, 0);
         Inimigo->dy = GetRandomValue(-1, 1);
@@ -108,7 +114,8 @@ int main(void)
     INIMIGO inimigos[MAX_INIMIGOS];
     carregaMapa("mapa1.txt",&ddx,&ddy,&bbx,&bby);
 
-    for(i = 0; i < MAX_INIMIGOS; i++){
+    for(i = 0; i < MAX_INIMIGOS; i++)
+    {
         iniciaDesloc(&inimigos[i],ddx,ddy);
     }
 
@@ -117,7 +124,8 @@ int main(void)
 
     InitPosicaoJogador(&J, mapa);
 
-    while (!WindowShouldClose()){
+    while (!WindowShouldClose())
+    {
 
         time = GetTime();     //função raylib que pega o tempo desde de que a janela foi aberta
 
@@ -132,7 +140,8 @@ int main(void)
 
         DrawRectangle(J.x, J.y, LARGURA_BLOCO, ALTURA_BLOCO, DARKBLUE);
 
-        for(int i=0; i<MAX_INIMIGOS; i++){        //laço que atualiza a posição dos inimigos, testa a sua posição e desanha cada 1
+        for(int i=0; i<MAX_INIMIGOS; i++)         //laço que atualiza a posição dos inimigos, testa a sua posição e desanha cada 1
+        {
             moveInimigo(&inimigos[i], ALTURA, LARGURA, time);
             n = moveInimigo(&inimigos[i], ALTURA, LARGURA, time);
             if(moveInimigo(&inimigos[i], ALTURA, LARGURA, time ) != 1) redefineDeslocamento(&inimigos[i],n);
@@ -166,14 +175,16 @@ void carregaMapa(const char *arquivoMapa, int *ddx, int *ddy, int *bbx,int *bby)
             {
                 mapa[i][j] = caractere;
 
-            if(caractere == 'M'){
-                *ddx = j*LARGURA_BLOCO;
-                *ddy = i*ALTURA_BLOCO;
-            }
-            if(caractere == 'S'){
-                *bbx = j*LARGURA_BLOCO;
-                *bby = i*ALTURA_BLOCO;
-            }
+                if(caractere == 'M')
+                {
+                    *ddx = j*LARGURA_BLOCO;
+                    *ddy = i*ALTURA_BLOCO;
+                }
+                if(caractere == 'S')
+                {
+                    *bbx = j*LARGURA_BLOCO;
+                    *bby = i*ALTURA_BLOCO;
+                }
 
             }
             else if (caractere == '\n')
@@ -268,23 +279,28 @@ void PortaTrancada (struct pos_J *J)//, char mapa[][LARGURA_MAPA])
     }
 }
 
-int teste(int ddx,int ddy,int bbx,int bby){
+int teste(int ddx,int ddy,int bbx,int bby)
+{
     int x = ddx - bbx;
     int y = ddy - bby;
 
-    if(x >= 0 && y >= 0){    //spawn inimigo a direita e abaixo da base, inimigo quer subir
+    if(x >= 0 && y >= 0)     //spawn inimigo a direita e abaixo da base, inimigo quer subir
+    {
         if(abs(x)>abs(y)) return 1;    //
         else return 2;
     }
-    if(x >= 0 && y <= 0){    //spawn inimigo a direita e acima da base, inimigo quer subir
+    if(x >= 0 && y <= 0)     //spawn inimigo a direita e acima da base, inimigo quer subir
+    {
         if(abs(x)>abs(y)) return 3;
         else return 4;
     }
-    if(x <= 0 && y >= 0){    //spawn inimigo a esquerda e abaixo da base, inimigo quer subir
+    if(x <= 0 && y >= 0)     //spawn inimigo a esquerda e abaixo da base, inimigo quer subir
+    {
         if(abs(x)>abs(y)) return 5;
         else return 6;
     }
-    if(x <= 0 && y <= 0){    //spawn inimigo a esquerda e acima da base, inimigo quer subir
+    if(x <= 0 && y <= 0)     //spawn inimigo a esquerda e acima da base, inimigo quer subir
+    {
         if(abs(x)>abs(y)) return 7;
         else return 8;
     }
