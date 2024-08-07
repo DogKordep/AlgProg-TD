@@ -124,7 +124,7 @@ void InitPosicaoJogador(JOGADOR *Jogador)
             {
                 Jogador->x = j * LARGURA_BLOCO;
                 Jogador->y = i * ALTURA_BLOCO;
-                return;  // Encerra a busca após encontrar a posição inicial do jogador
+                return;  // Encerra a busca apï¿½s encontrar a posiï¿½ï¿½o inicial do jogador
             }
         }
     }

@@ -3,8 +3,15 @@
 #include <math.h>
 #include <string.h>
 #include "raylib.h"
-#include <math.h>
 //#include "funcoes.h"
+
+#ifndef FUNCOES_H_INCLUDED
+#define FUNCOES_H_INCLUDED
+#define NUM_FRAMES 3
+
+
+
+#endif // FUNCOES_H_INCLUDED
 
 #define ALTURA_MAPA 30
 #define LARGURA_MAPA 60
@@ -14,150 +21,29 @@
 
 #define TAM_POPUP 200
 
-#define MAX_INIMIGOS 10
-#define LARGURA 600
-#define ALTURA 1200
+typedef enum GameScreen { LOGO = 0, TITULO, JOGO, OPCOES} GameScreen;
 
 char mapa[ALTURA_MAPA][LARGURA_MAPA];
 
-struct pos_J  //estrutura para o jogador
+typedef struct botao{
+    Rectangle rect;
+    Color cor;
+
+}BOTAO;
+
+typedef struct Inimigo
+{
+    float x,y;
+    int dx, dy;
+} INIMIGO;
+
+typedef struct pos_J
 {
     float x;
     float y;
-};
+} JOGADOR;
 
-typedef struct Inimigo    //estrutura para o inimigo
-{
-    int x;
-    int y;
-    int dx;
-    int dy;
-    int x_ant;
-    int y_ant;
-} INIMIGO;
-
-int deveMover(int x, int y, int dx, int dy, int x_ant, int y_ant, int larg, int alt)   //funçãp para ver se inimigo pode continuar seu rumo atual
-{
-    if(x+1*dx > (larg-20)) return 0;
-    if(x+1*dx < 0) return 2;
-    if(y+1*dy > (alt-20)) return 3;
-    if(y+1*dy < 0) return 4;
-    return 1;
-}
-
-int moveInimigo( INIMIGO *Inimigo,int largura, int altura, double tempo)
-{
-    int p;
-    if(fmod(tempo, 2) < 0.016 )       //função da math.h para pegar resto de divisão de numeros com virgula
-    {
-        Inimigo->x += Inimigo->dx*20;
-        Inimigo->y += Inimigo->dy*20;
-
-        p = deveMover(Inimigo->x,Inimigo->y,Inimigo->dx,Inimigo->dy, Inimigo->x_ant,Inimigo->y_ant,largura,altura);
-
-        Inimigo->x_ant = Inimigo->x;
-        Inimigo->y_ant = Inimigo->y;
-        return p;
-    }
-}
-
-void iniciaDesloc(INIMIGO *Inimigo, int ddx,int ddy)
-{
-
-    Inimigo->dx = -1;//GetRandomValue(-1, 1);
-    Inimigo->dy = 0;//GetRandomValue(-1, 1);
-    Inimigo->x = ddx;
-    Inimigo->y = ddy;
-    while((Inimigo->dx ==0 && Inimigo->dy == 0))
-    {
-        Inimigo->dx = GetRandomValue(-1, 1);
-        Inimigo->dy = GetRandomValue(-1, 1);
-    }
-}
-
-void redefineDeslocamento(INIMIGO *Inimigo, int p)
-{
-    switch(p)
-    {
-    case 0:
-        Inimigo->dx = GetRandomValue(-1, 0);
-        Inimigo->dy = GetRandomValue(-1, 1);
-        break;
-    case 2:
-        Inimigo->dx = GetRandomValue(0, 1);
-        Inimigo->dy = GetRandomValue(-1, 1);
-        break;
-    case 3:
-        Inimigo->dx = GetRandomValue(-1, 1);
-        Inimigo->dy = GetRandomValue(-1, 0);
-        break;
-    case 4:
-        Inimigo->dx = GetRandomValue(-1, 1);
-        Inimigo->dy = GetRandomValue(0, 1);
-        break;
-    case 5:
-        Inimigo->dx = 0;//GetRandomValue(-1, 1);
-        Inimigo->dy = 0;//GetRandomValue(0, 1);
-        break;
-    }
-}
-
-int main(void)
-{
-    struct pos_J J = {0.0, 0.0};  // Inicializa a posição de J
-
-    double time = 0;
-    int i=0, n, p;
-    int ddx=0,ddy=0; //localização onde nasce os inimigos
-    int bbx=0,bby=0; // localização da base
-
-    INIMIGO inimigos[MAX_INIMIGOS];
-    carregaMapa("mapa1.txt",&ddx,&ddy,&bbx,&bby);
-
-    for(i = 0; i < MAX_INIMIGOS; i++)
-    {
-        iniciaDesloc(&inimigos[i],ddx,ddy);
-    }
-
-    InitWindow(LARGURA_MAPA * LARGURA_BLOCO, ALTURA_MAPA * ALTURA_BLOCO, "TowerDefense");
-    SetTargetFPS(60);
-
-    InitPosicaoJogador(&J, mapa);
-
-    while (!WindowShouldClose())
-    {
-
-        time = GetTime();     //função raylib que pega o tempo desde de que a janela foi aberta
-
-        DesenhaMapa(mapa);
-
-        MovimentoJogador(&J, mapa);
-
-        PortaTrancada(&J, mapa);
-
-        BeginDrawing();
-        ClearBackground(RAYWHITE);
-
-        DrawRectangle(J.x, J.y, LARGURA_BLOCO, ALTURA_BLOCO, DARKBLUE);
-
-        for(int i=0; i<MAX_INIMIGOS; i++)         //laço que atualiza a posição dos inimigos, testa a sua posição e desanha cada 1
-        {
-            moveInimigo(&inimigos[i], ALTURA, LARGURA, time);
-            n = moveInimigo(&inimigos[i], ALTURA, LARGURA, time);
-            if(moveInimigo(&inimigos[i], ALTURA, LARGURA, time ) != 1) redefineDeslocamento(&inimigos[i],n);
-            DrawRectangle(inimigos[i].x, inimigos[i].y, ALTURA_BLOCO, LARGURA_BLOCO, ORANGE);
-        }
-
-        EndDrawing();
-
-        //printf("%c", mapa[0][0]);
-    }
-
-    CloseWindow();
-    return 0;
-}
-
-void carregaMapa(const char *arquivoMapa, int *ddx, int *ddy, int *bbx,int *bby)//, char mapa[][LARGURA_MAPA])
+void carregaMapa(const char *arquivoMapa)
 {
     FILE *file = fopen(arquivoMapa, "r");
     if (file == NULL)
@@ -174,18 +60,6 @@ void carregaMapa(const char *arquivoMapa, int *ddx, int *ddy, int *bbx,int *bby)
             if (caractere == 'W' || caractere == ' ' || caractere == 'J' || caractere == 'M' || caractere == 'H' || caractere == 'R' || caractere == 'S' || caractere == 'D')
             {
                 mapa[i][j] = caractere;
-
-                if(caractere == 'M')
-                {
-                    *ddx = j*LARGURA_BLOCO;
-                    *ddy = i*ALTURA_BLOCO;
-                }
-                if(caractere == 'S')
-                {
-                    *bbx = j*LARGURA_BLOCO;
-                    *bby = i*ALTURA_BLOCO;
-                }
-
             }
             else if (caractere == '\n')
             {
@@ -196,7 +70,7 @@ void carregaMapa(const char *arquivoMapa, int *ddx, int *ddy, int *bbx,int *bby)
     fclose(file);
 }
 
-void DesenhaMapa()//(char mapa[][LARGURA_MAPA])
+void DesenhaMapa()
 {
     for (int i = 0; i < ALTURA_MAPA; i++)
     {
@@ -218,10 +92,10 @@ void DesenhaMapa()//(char mapa[][LARGURA_MAPA])
             {
                 DrawRectangle(j * LARGURA_BLOCO, i * ALTURA_BLOCO, LARGURA_BLOCO, ALTURA_BLOCO, SKYBLUE);
             }
-            if (mapa[i][j] == 'M')
-            {
-                DrawRectangle(j * LARGURA_BLOCO, i * ALTURA_BLOCO, LARGURA_BLOCO, ALTURA_BLOCO, RED);
-            }
+            /* if (mapa[i][j] == 'M')
+             {
+                 DrawRectangle(j * LARGURA_BLOCO, i * ALTURA_BLOCO, LARGURA_BLOCO, ALTURA_BLOCO, RED);
+             }*/
             if (mapa[i][j] == 'D')
             {
                 DrawRectangle(j * LARGURA_BLOCO, i * ALTURA_BLOCO, LARGURA_BLOCO, ALTURA_BLOCO, BROWN);
@@ -230,8 +104,32 @@ void DesenhaMapa()//(char mapa[][LARGURA_MAPA])
     }
 }
 
+int InitPosicaoInimigo(INIMIGO *Inimigo)
+{
+    int n=0;
 
-void InitPosicaoJogador(struct pos_J *J)//, char mapa[][LARGURA_MAPA])
+    for (int i = 0; i < ALTURA_MAPA; i++)
+    {
+        for (int j = 0; j < LARGURA_MAPA; j++)
+        {
+
+            if (mapa[i][j] == 'M')
+            {
+
+                Inimigo->x = j * LARGURA_BLOCO;
+                Inimigo->y = i * ALTURA_BLOCO;
+                Inimigo->dx = -1;
+                Inimigo->dy = 0;
+                //Inimigo++;
+                n++;
+            }
+        }
+    }
+    return n;
+
+}
+
+void InitPosicaoJogador(JOGADOR *Jogador)
 {
     for (int i = 0; i < ALTURA_MAPA; i++)
     {
@@ -239,69 +137,247 @@ void InitPosicaoJogador(struct pos_J *J)//, char mapa[][LARGURA_MAPA])
         {
             if (mapa[i][j] == 'J')
             {
-                J->x = j * LARGURA_BLOCO;
-                J->y = i * ALTURA_BLOCO;
-                return;  // Encerra a busca após encontrar a posição inicial do jogador
+                Jogador->x = j * LARGURA_BLOCO;
+                Jogador->y = i * ALTURA_BLOCO;
+                return;  // Encerra a busca apï¿½s encontrar a posiï¿½ï¿½o inicial do jogador
             }
         }
     }
 }
 
-void MovimentoJogador(struct pos_J *J)//, char mapa[][LARGURA_MAPA])
+void MovimentoJogador(JOGADOR *Jogador)
 {
-    if (IsKeyDown(KEY_UP) && J->y > 0 && mapa[(int)(J->y - 1)/ALTURA_BLOCO][(int)J->x/LARGURA_BLOCO] != 'W' && mapa[(int)(J->y - 1)/ALTURA_BLOCO][(int)(J->x + LARGURA_BLOCO - 1)/LARGURA_BLOCO] != 'W')
+    if (IsKeyDown(KEY_UP) && Jogador->y > 0 && mapa[(int)(Jogador->y - 1)/ALTURA_BLOCO][(int)Jogador->x/LARGURA_BLOCO] != 'W' && mapa[(int)(Jogador->y - 1)/ALTURA_BLOCO][(int)(Jogador->x + LARGURA_BLOCO - 1)/LARGURA_BLOCO] != 'W')
     {
-        J->y -= 1;
-        printf("Moving up: J.y = %f\n", J->y);
+        Jogador->y -= 1;
+        printf("Moving up: J.y = %f\n", Jogador->y);
     }
-    if (IsKeyDown(KEY_DOWN) && J->y < ((ALTURA_MAPA*ALTURA_BLOCO)-ALTURA_BLOCO) && mapa[(int)(J->y + ALTURA_BLOCO)/ALTURA_BLOCO][(int)J->x/LARGURA_BLOCO] != 'W' && mapa[(int)(J->y + ALTURA_BLOCO)/ALTURA_BLOCO][(int)(J->x + LARGURA_BLOCO - 1)/LARGURA_BLOCO] != 'W')
+    if (IsKeyDown(KEY_DOWN) && Jogador->y < ((ALTURA_MAPA*ALTURA_BLOCO)-ALTURA_BLOCO) && mapa[(int)(Jogador->y + ALTURA_BLOCO)/ALTURA_BLOCO][(int)Jogador->x/LARGURA_BLOCO] != 'W' && mapa[(int)(Jogador->y + ALTURA_BLOCO)/ALTURA_BLOCO][(int)(Jogador->x + LARGURA_BLOCO - 1)/LARGURA_BLOCO] != 'W')
     {
-        J->y += 1;
-        printf("Moving down: J.y = %f\n", J->y);
+        Jogador->y += 1;
+        printf("Moving down: J.y = %f\n", Jogador->y);
     }
-    if (IsKeyDown(KEY_LEFT) && J->x > 0 && mapa[(int)J->y/ALTURA_BLOCO][(int)(J->x - 1)/LARGURA_BLOCO] != 'W' && mapa[(int)(J->y + ALTURA_BLOCO - 1)/ALTURA_BLOCO][(int)(J->x - 1)/LARGURA_BLOCO] != 'W' &&  mapa[(int)(J->y + ALTURA_BLOCO - 1)/ALTURA_BLOCO][(int)(J->x - 1)/LARGURA_BLOCO] != 'D')
+    if (IsKeyDown(KEY_LEFT) && Jogador->x > 0 && mapa[(int)Jogador->y/ALTURA_BLOCO][(int)(Jogador->x - 1)/LARGURA_BLOCO] != 'W' && mapa[(int)(Jogador->y + ALTURA_BLOCO - 1)/ALTURA_BLOCO][(int)(Jogador->x - 1)/LARGURA_BLOCO] != 'W' &&  mapa[(int)(Jogador->y + ALTURA_BLOCO - 1)/ALTURA_BLOCO][(int)(Jogador->x - 1)/LARGURA_BLOCO] != 'D')
     {
-        J->x -= 1;
-        printf("Moving left: J.x = %f\n", J->x);
+        Jogador->x -= 1;
+        printf("Moving left: J.x = %f\n", Jogador->x);
     }
-    if (IsKeyDown(KEY_RIGHT) && J->x < ((LARGURA_MAPA*LARGURA_BLOCO)-LARGURA_BLOCO) && mapa[(int)J->y/ALTURA_BLOCO][(int)(J->x + LARGURA_BLOCO)/LARGURA_BLOCO] != 'W' && mapa[(int)(J->y + ALTURA_BLOCO - 1)/ALTURA_BLOCO][(int)(J->x + LARGURA_BLOCO)/LARGURA_BLOCO] != 'W')
+    if (IsKeyDown(KEY_RIGHT) && Jogador->x < ((LARGURA_MAPA*LARGURA_BLOCO)-LARGURA_BLOCO) && mapa[(int)Jogador->y/ALTURA_BLOCO][(int)(Jogador->x + LARGURA_BLOCO)/LARGURA_BLOCO] != 'W' && mapa[(int)(Jogador->y + ALTURA_BLOCO - 1)/ALTURA_BLOCO][(int)(Jogador->x + LARGURA_BLOCO)/LARGURA_BLOCO] != 'W')
     {
-        J->x += 1;
-        printf("Moving right: J.x = %f\n", J->x);
+        Jogador->x += 1;
+        printf("Moving right: J.x = %f\n", Jogador->x);
     }
+
 }
 
-void PortaTrancada (struct pos_J *J)//, char mapa[][LARGURA_MAPA])
+void MovimentoInimigo(INIMIGO *Inimigo, int TAM)
 {
-    if(mapa[(int)J->y/ALTURA_BLOCO][(int)J->x/LARGURA_BLOCO] == 'D')
+
+    //for(int i = 0; i < TAM; i++)
+    //{
+
+        if(mapa[(int)(Inimigo->y)/ALTURA_BLOCO][(int)(Inimigo->x - 1)/LARGURA_BLOCO] == 'W' && mapa[(int)Inimigo->y/ALTURA_BLOCO][(int)(Inimigo->x + LARGURA_BLOCO)/LARGURA_BLOCO] != 'W' || mapa[(int)Inimigo->y/ALTURA_BLOCO][(int)(Inimigo->x + LARGURA_BLOCO)/LARGURA_BLOCO] != 'H' && mapa[(int)(Inimigo->y)/ALTURA_BLOCO][(int)(Inimigo->x - 1)/LARGURA_BLOCO] == 'H')
+            Inimigo->dx++;
+
+        if(mapa[(int)(Inimigo->y)/ALTURA_BLOCO][(int)(Inimigo->x - 1)/LARGURA_BLOCO] != 'W' && mapa[(int)Inimigo->y/ALTURA_BLOCO][(int)(Inimigo->x + LARGURA_BLOCO)/LARGURA_BLOCO] == 'W' || mapa[(int)(Inimigo->y)/ALTURA_BLOCO][(int)(Inimigo->x - 1)/LARGURA_BLOCO] != 'H' && mapa[(int)Inimigo->y/ALTURA_BLOCO][(int)(Inimigo->x + LARGURA_BLOCO)/LARGURA_BLOCO] == 'H')
+            Inimigo->dx--;
+
+        if(mapa[(int)(Inimigo->y - 1)/ALTURA_BLOCO][(int)(Inimigo->x)/LARGURA_BLOCO] == 'W' && mapa[(int)(Inimigo->y + ALTURA_BLOCO)/ALTURA_BLOCO][(int)Inimigo->x/LARGURA_BLOCO] != 'W' || mapa[(int)(Inimigo->y + ALTURA_BLOCO)/ALTURA_BLOCO][(int)Inimigo->x/LARGURA_BLOCO] != 'H' && mapa[(int)(Inimigo->y - 1)/ALTURA_BLOCO][(int)(Inimigo->x)/LARGURA_BLOCO] == 'H')
+            Inimigo->dy++;
+
+        if(mapa[(int)(Inimigo->y - 1)/ALTURA_BLOCO][(int)(Inimigo->x)/LARGURA_BLOCO] != 'W' && mapa[(int)(Inimigo->y + ALTURA_BLOCO)/ALTURA_BLOCO][(int)Inimigo->x/LARGURA_BLOCO] == 'W' || mapa[(int)(Inimigo->y - 1)/ALTURA_BLOCO][(int)(Inimigo->x)/LARGURA_BLOCO] != 'H' && mapa[(int)(Inimigo->y + ALTURA_BLOCO)/ALTURA_BLOCO][(int)Inimigo->x/LARGURA_BLOCO] == 'H')
+            Inimigo->dy--;
+
+
+        Inimigo->y += Inimigo->dy*20;
+        printf("Inimigo.dy %d = %d\n", Inimigo, Inimigo->dy);
+
+        Inimigo->x += Inimigo->dx*20;
+        printf("Inimigo.dx = %d\n", Inimigo->dx);
+
+        //Inimigo++;
+
+    //}
+
+}
+
+void DesenhaInimigo(INIMIGO *Inimigo, int TAM)
+{
+    //for(int i = 0; i < TAM; i++)
+    //{
+        DrawRectangle(Inimigo->x, Inimigo->y, LARGURA_BLOCO, ALTURA_BLOCO, RED);
+        //Inimigo++;
+    //}
+}
+void PortaTrancada (JOGADOR *Jogador)
+{
+    if(mapa[(int)Jogador->y/ALTURA_BLOCO][(int)Jogador->x/LARGURA_BLOCO] == 'D')
     {
         DrawText("CHAVE PARA PORTA", 200, 200, 50, BLACK);
     }
 }
 
-int teste(int ddx,int ddy,int bbx,int bby)
+void IniciaBotao(BOTAO *botao, Rectangle rect, Color cor)
 {
-    int x = ddx - bbx;
-    int y = ddy - bby;
-
-    if(x >= 0 && y >= 0)     //spawn inimigo a direita e abaixo da base, inimigo quer subir
-    {
-        if(abs(x)>abs(y)) return 1;    //
-        else return 2;
-    }
-    if(x >= 0 && y <= 0)     //spawn inimigo a direita e acima da base, inimigo quer subir
-    {
-        if(abs(x)>abs(y)) return 3;
-        else return 4;
-    }
-    if(x <= 0 && y >= 0)     //spawn inimigo a esquerda e abaixo da base, inimigo quer subir
-    {
-        if(abs(x)>abs(y)) return 5;
-        else return 6;
-    }
-    if(x <= 0 && y <= 0)     //spawn inimigo a esquerda e acima da base, inimigo quer subir
-    {
-        if(abs(x)>abs(y)) return 7;
-        else return 8;
-    }
+    botao->rect = rect;
+    botao->cor = cor;
 }
+
+bool botaopress(BOTAO botao){
+    return CheckCollisionPointRec(GetMousePosition(), botao.rect);
+}
+
+
+
+int main(void)
+{
+    BOTAO botao1 = {0}, botao2 = {0};
+    JOGADOR Jogador = {0.0, 0.0};  // Inicializa a posiï¿½ï¿½o de J
+    INIMIGO Inimigo[5];
+
+    GameScreen currentScreen = LOGO;
+
+    int framesCounter = 0;
+
+
+    SetTargetFPS(60);
+
+
+    carregaMapa("mapa1.txt");
+
+    InitPosicaoJogador(&Jogador);
+
+    for(int i=0; i<5; i++)
+    InitPosicaoInimigo(&Inimigo[i]);
+
+    for(int i=0; i<5; i++)
+    printf("%f %f\n",Inimigo[i].x, Inimigo[i].y);
+
+
+
+
+    InitWindow(LARGURA_MAPA * LARGURA_BLOCO, ALTURA_MAPA * ALTURA_BLOCO, "TowerDefense");
+
+    IniciaBotao(&botao1,(Rectangle){(LARGURA_MAPA * LARGURA_BLOCO)/2 - 100, (ALTURA_MAPA * ALTURA_BLOCO)/2 - 50,200,100}, RED);
+    IniciaBotao(&botao2,(Rectangle){(LARGURA_MAPA * LARGURA_BLOCO)/2 - 100 , (ALTURA_MAPA * ALTURA_BLOCO)/2 + 100,200,100}, RED);
+
+
+    while (!WindowShouldClose())
+    {
+
+
+        //PortaTrancada(&Jogador);
+        switch(currentScreen)
+        {
+            case LOGO:
+            {
+                // TODO: Update LOGO screen variables here!
+
+                framesCounter++;    // Count frames
+
+                // Wait for 2 seconds (120 frames) before jumping to TITLE screen
+                if (framesCounter > 120)
+                {
+                    currentScreen = TITULO;
+                }
+            } break;
+            case TITULO:
+            {
+                // TODO: Update TITLE screen variables here!
+
+                // Press enter to change to GAMEPLAY screen
+                //if (IsKeyPressed(KEY_ENTER) || IsGestureDetected(GESTURE_TAP))
+                //{
+                //    currentScreen = GAMEPLAY;
+                //
+                if(botaopress(botao1)) botao1.cor = BLUE;
+                else botao1.cor = RED;
+
+                if(botaopress(botao1) && IsMouseButtonPressed(MOUSE_BUTTON_LEFT)){
+                    currentScreen = JOGO;
+                }
+
+                if(botaopress(botao2)) botao2.cor = BLUE;
+                else botao2.cor = RED;
+
+                if(botaopress(botao2) && IsMouseButtonPressed(MOUSE_BUTTON_LEFT)){
+                    currentScreen = OPCOES;
+                }
+
+            } break;
+            case JOGO:
+            {
+                // TODO: Update GAMEPLAY screen variables here!
+
+                // Press enter to change to ENDING screen
+                //if (IsKeyPressed(KEY_ENTER) || IsGestureDetected(GESTURE_TAP))
+                //{
+                //    currentScreen = ENDING;
+                //}
+            } break;
+            case OPCOES:
+            {
+                if (IsKeyPressed(KEY_ENTER) || IsGestureDetected(GESTURE_TAP))
+                {
+                    currentScreen = TITULO;
+                }
+            } break;
+            default: break;
+        }
+        switch(currentScreen)
+            {
+                BeginDrawing();
+                case LOGO:
+                {
+                    // TODO: Draw LOGO screen here!
+                    ClearBackground(BLUE);
+                    DrawText("MEIA BOCA JR", 300, 300, 60, YELLOW);
+                    DrawText("WAIT for 2 SECONDS...", 290, 220, 20, YELLOW);
+
+                } break;
+                case TITULO:
+                {
+                    // TODO: Draw TITLE screen here!
+                    DrawRectangle(0, 0, LARGURA_MAPA * LARGURA_BLOCO, ALTURA_MAPA * ALTURA_BLOCO, GREEN);
+                    DrawText("TITLE SCREEN", 20, 20, 40, DARKGREEN);
+                    DrawText("PRESS ENTER or TAP to JUMP to GAMEPLAY SCREEN", 120, 220, 20, DARKGREEN);
+                    DrawRectangleRec(botao1.rect, botao1.cor);
+                    DrawText("JOGAR", botao1.rect.x + botao1.rect.width/2 - MeasureText("JOGAR",20)/2, botao1.rect.y + botao1.rect.height/2 - 20/2,20, WHITE);
+                    DrawRectangleRec(botao2.rect, botao2.cor);
+                    DrawText("OPCOES", botao2.rect.x + botao2.rect.width/2 - MeasureText("OPCOES",20)/2, botao2.rect.y + botao2.rect.height/2 - 20/2,20, WHITE);
+
+
+                } break;
+                case JOGO:
+                {
+                    // TODO: Draw GAMEPLAY screen here!
+
+                    ClearBackground(RAYWHITE);
+                    DesenhaMapa();
+                    for(int i=0; i<5; i++)
+                        DrawRectangle(Inimigo[i].x, Inimigo[i].y, LARGURA_BLOCO, ALTURA_BLOCO, RED);
+                    //DesenhaInimigo(&Inimigo[i], 5);
+                    DrawRectangle(Jogador.x, Jogador.y, LARGURA_BLOCO, ALTURA_BLOCO, DARKBLUE);
+
+                    MovimentoJogador(&Jogador);
+                    for(int i=0; i<5; i++)
+                        MovimentoInimigo(&Inimigo[i], 5);
+                } break;
+                case OPCOES:
+                {
+                    ClearBackground(RAYWHITE);
+                    DrawText("OPCOES", 20, 20, 40, DARKGREEN);
+                    DrawText("PRESS ENTER or TAP to JUMP to GAMEPLAY SCREEN", 120, 220, 20, DARKGREEN);
+
+
+                } break;
+                default: break;
+        }
+        EndDrawing();
+    }
+    CloseWindow();
+    return 0;
+}
+
+
+
