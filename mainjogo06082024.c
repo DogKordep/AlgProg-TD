@@ -431,7 +431,7 @@ int main(void)
                 else botaoVOLTAR.cor = RED;
 
                 if(botaopress(botaoVOLTAR) && IsMouseButtonPressed(MOUSE_BUTTON_LEFT)){
-                    currentScreen = JOGO;
+                    currentScreen = TITULO;
                 }
 
                 if(botaopress(botaoSAIR2)) botaoSAIR2.cor = BLUE;
