@@ -21,7 +21,7 @@
 
 #define TAM_POPUP 200
 
-typedef enum GameScreen { LOGO = 0, TITULO, JOGO, OPCOES} GameScreen;
+typedef enum GameScreen { LOGO = 0, TITULO, JOGO, OPCOES, FASES, PAUSE} GameScreen;
 
 char mapa[ALTURA_MAPA][LARGURA_MAPA];
 
@@ -115,7 +115,6 @@ int InitPosicaoInimigo(INIMIGO *Inimigo)
 
             if (mapa[i][j] == 'M')
             {
-
                 Inimigo->x = j * LARGURA_BLOCO;
                 Inimigo->y = i * ALTURA_BLOCO;
                 Inimigo->dx = -1;
@@ -231,9 +230,11 @@ bool botaopress(BOTAO botao){
 
 int main(void)
 {
-    BOTAO botao1 = {0}, botao2 = {0};
+    BOTAO botaoNOVOJ = {0}, botaoCARREGAR = {0}, botaoSAIR = {0}, botaoFASE1 = {0}, botaoFASE2 = {0}, botaoFASE3 = {0}, botaoFASE4 = {0};
+    BOTAO botaoCONT = {0}, botaoCARREGAR2 = {0}, botaoSALVAR = {0}, botaoVOLTAR = {0}, botaoSAIR2 = {0};
     JOGADOR Jogador = {0.0, 0.0};  // Inicializa a posi��o de J
     INIMIGO Inimigo[5];
+    //char mapa[11]
 
     GameScreen currentScreen = LOGO;
 
@@ -243,23 +244,38 @@ int main(void)
     SetTargetFPS(60);
 
 
-    carregaMapa("mapa1.txt");
+    //carregaMapa("mapa1.txt");
 
-    InitPosicaoJogador(&Jogador);
+    //InitPosicaoJogador(&Jogador);
 
-    for(int i=0; i<5; i++)
-    InitPosicaoInimigo(&Inimigo[i]);
+    //for(int i=0; i<5; i++)
+    //InitPosicaoInimigo(&Inimigo[i]);
 
-    for(int i=0; i<5; i++)
-    printf("%f %f\n",Inimigo[i].x, Inimigo[i].y);
+    //for(int i=0; i<5; i++)
+    //printf("%f %f\n",Inimigo[i].x, Inimigo[i].y);
 
 
 
 
     InitWindow(LARGURA_MAPA * LARGURA_BLOCO, ALTURA_MAPA * ALTURA_BLOCO, "TowerDefense");
 
-    IniciaBotao(&botao1,(Rectangle){(LARGURA_MAPA * LARGURA_BLOCO)/2 - 100, (ALTURA_MAPA * ALTURA_BLOCO)/2 - 50,200,100}, RED);
-    IniciaBotao(&botao2,(Rectangle){(LARGURA_MAPA * LARGURA_BLOCO)/2 - 100 , (ALTURA_MAPA * ALTURA_BLOCO)/2 + 100,200,100}, RED);
+    IniciaBotao(&botaoNOVOJ,(Rectangle){(LARGURA_MAPA * LARGURA_BLOCO)/2 - 100, (ALTURA_MAPA * ALTURA_BLOCO)/2 - 200,200,100}, RED);
+    IniciaBotao(&botaoCARREGAR,(Rectangle){(LARGURA_MAPA * LARGURA_BLOCO)/2 - 100 , (ALTURA_MAPA * ALTURA_BLOCO)/2 - 50,200,100}, RED);
+    IniciaBotao(&botaoSAIR,(Rectangle){(LARGURA_MAPA * LARGURA_BLOCO)/2 - 100 , (ALTURA_MAPA * ALTURA_BLOCO)/2 + 100,200,100}, RED);
+
+    IniciaBotao(&botaoFASE1,(Rectangle){(LARGURA_MAPA * LARGURA_BLOCO)/2 - 300 , (ALTURA_MAPA * ALTURA_BLOCO)/2 - 200,200,100}, RED);
+    IniciaBotao(&botaoFASE2,(Rectangle){(LARGURA_MAPA * LARGURA_BLOCO)/2 + 100 , (ALTURA_MAPA * ALTURA_BLOCO)/2 - 200,200,100}, RED);
+    IniciaBotao(&botaoFASE3,(Rectangle){(LARGURA_MAPA * LARGURA_BLOCO)/2 - 300 , (ALTURA_MAPA * ALTURA_BLOCO)/2 + 100,200,100}, RED);
+    IniciaBotao(&botaoFASE4,(Rectangle){(LARGURA_MAPA * LARGURA_BLOCO)/2 + 100 , (ALTURA_MAPA * ALTURA_BLOCO)/2 + 100,200,100}, RED);
+
+
+    IniciaBotao(&botaoCONT,(Rectangle){(LARGURA_MAPA * LARGURA_BLOCO)/2 - 100, (ALTURA_MAPA * ALTURA_BLOCO)/2 - 300,200,100}, RED);
+    IniciaBotao(&botaoCARREGAR2,(Rectangle){(LARGURA_MAPA * LARGURA_BLOCO)/2 - 100 , (ALTURA_MAPA * ALTURA_BLOCO)/2 - 180,200,100}, RED);
+    IniciaBotao(&botaoSALVAR,(Rectangle){(LARGURA_MAPA * LARGURA_BLOCO)/2 - 100 , (ALTURA_MAPA * ALTURA_BLOCO)/2 - 60,200,100}, RED);
+    IniciaBotao(&botaoVOLTAR,(Rectangle){(LARGURA_MAPA * LARGURA_BLOCO)/2 - 100 , (ALTURA_MAPA * ALTURA_BLOCO)/2 + 60,200,100}, RED);
+    IniciaBotao(&botaoSAIR2,(Rectangle){(LARGURA_MAPA * LARGURA_BLOCO)/2 - 100 , (ALTURA_MAPA * ALTURA_BLOCO)/2 + 180,200,100}, RED);
+
+
 
 
     while (!WindowShouldClose())
@@ -290,19 +306,28 @@ int main(void)
                 //{
                 //    currentScreen = GAMEPLAY;
                 //
-                if(botaopress(botao1)) botao1.cor = BLUE;
-                else botao1.cor = RED;
+                if(botaopress(botaoNOVOJ)) botaoNOVOJ.cor = BLUE;
+                else botaoNOVOJ.cor = RED;
 
-                if(botaopress(botao1) && IsMouseButtonPressed(MOUSE_BUTTON_LEFT)){
+                if(botaopress(botaoNOVOJ) && IsMouseButtonPressed(MOUSE_BUTTON_LEFT)){
+                    currentScreen = FASES;
+                }
+
+                if(botaopress(botaoCARREGAR)) botaoCARREGAR.cor = BLUE;
+                else botaoCARREGAR.cor = RED;
+
+                if(botaopress(botaoCARREGAR) && IsMouseButtonPressed(MOUSE_BUTTON_LEFT)){
+                    //Carregar jogo salvo
                     currentScreen = JOGO;
                 }
 
-                if(botaopress(botao2)) botao2.cor = BLUE;
-                else botao2.cor = RED;
+                if(botaopress(botaoSAIR)) botaoSAIR.cor = BLUE;
+                else botaoSAIR.cor = RED;
 
-                if(botaopress(botao2) && IsMouseButtonPressed(MOUSE_BUTTON_LEFT)){
-                    currentScreen = OPCOES;
+                if(botaopress(botaoSAIR) && IsMouseButtonPressed(MOUSE_BUTTON_LEFT)){
+                    CloseWindow();
                 }
+
 
             } break;
             case JOGO:
@@ -310,10 +335,10 @@ int main(void)
                 // TODO: Update GAMEPLAY screen variables here!
 
                 // Press enter to change to ENDING screen
-                //if (IsKeyPressed(KEY_ENTER) || IsGestureDetected(GESTURE_TAP))
-                //{
-                //    currentScreen = ENDING;
-                //}
+                if (IsKeyPressed(KEY_TAB))
+                {
+                    currentScreen = PAUSE;
+                }
             } break;
             case OPCOES:
             {
@@ -321,6 +346,103 @@ int main(void)
                 {
                     currentScreen = TITULO;
                 }
+            } break;
+            case FASES:
+            {
+                if(botaopress(botaoFASE1)) botaoFASE1.cor = BLUE;
+                else botaoFASE1.cor = RED;
+
+                if(botaopress(botaoFASE1) && IsMouseButtonPressed(MOUSE_BUTTON_LEFT)){
+                    carregaMapa("mapa1.txt");
+                    InitPosicaoJogador(&Jogador);
+                    for(int i=0; i<5; i++)
+                        InitPosicaoInimigo(&Inimigo[i]);
+                    currentScreen = JOGO;
+
+                }
+
+                if(botaopress(botaoFASE2)) botaoFASE2.cor = BLUE;
+                else botaoFASE2.cor = RED;
+
+                if(botaopress(botaoFASE2) && IsMouseButtonPressed(MOUSE_BUTTON_LEFT)){
+                    carregaMapa("mapa2.txt");
+                    InitPosicaoJogador(&Jogador);
+                    for(int i=0; i<5; i++)
+                        InitPosicaoInimigo(&Inimigo[i]);
+                    currentScreen = JOGO;
+                }
+
+
+                if(botaopress(botaoFASE3)) botaoFASE3.cor = BLUE;
+                else botaoFASE3.cor = RED;
+
+                if(botaopress(botaoFASE3) && IsMouseButtonPressed(MOUSE_BUTTON_LEFT)){
+                    carregaMapa("mapa3.txt");
+                    InitPosicaoJogador(&Jogador);
+                    for(int i=0; i<5; i++)
+                        InitPosicaoInimigo(&Inimigo[i]);
+                    currentScreen = JOGO;
+                }
+
+                if(botaopress(botaoFASE4)) botaoFASE4.cor = BLUE;
+                else botaoFASE4.cor = RED;
+
+                if(botaopress(botaoFASE4) && IsMouseButtonPressed(MOUSE_BUTTON_LEFT)){
+                    carregaMapa("mapa4.txt");
+                    InitPosicaoJogador(&Jogador);
+                    for(int i=0; i<5; i++)
+                        InitPosicaoInimigo(&Inimigo[i]);
+                    currentScreen = JOGO;
+                }
+
+                //if (IsKeyPressed(KEY_ENTER) || IsGestureDetected(GESTURE_TAP))
+                //{
+                //    currentScreen = OPCOES;
+                //}
+            } break;
+            case PAUSE:
+            {
+                // TODO: Update GAMEPLAY screen variables here!
+
+                if(botaopress(botaoCONT)) botaoCONT.cor = BLUE;
+                else botaoCONT.cor = RED;
+
+                if(botaopress(botaoCONT) && IsMouseButtonPressed(MOUSE_BUTTON_LEFT)){
+                    currentScreen = JOGO;
+                }
+
+                if(botaopress(botaoCARREGAR2)) botaoCARREGAR2.cor = BLUE;
+                else botaoCARREGAR2.cor = RED;
+
+                if(botaopress(botaoCARREGAR2) && IsMouseButtonPressed(MOUSE_BUTTON_LEFT)){
+                    //carregar jogo salvo
+                    currentScreen = JOGO;
+                }
+
+                if(botaopress(botaoSALVAR)) botaoSALVAR.cor = BLUE;
+                else botaoSALVAR.cor = RED;
+
+                if(botaopress(botaoSALVAR) && IsMouseButtonPressed(MOUSE_BUTTON_LEFT)){
+                    //salva estado atual do jogo
+                    //currentScreen = OPCOES;
+                }
+
+                if(botaopress(botaoVOLTAR)) botaoVOLTAR.cor = BLUE;
+                else botaoVOLTAR.cor = RED;
+
+                if(botaopress(botaoVOLTAR) && IsMouseButtonPressed(MOUSE_BUTTON_LEFT)){
+                    currentScreen = JOGO;
+                }
+
+                if(botaopress(botaoSAIR2)) botaoSAIR2.cor = BLUE;
+                else botaoSAIR2.cor = RED;
+
+                if(botaopress(botaoSAIR2) && IsMouseButtonPressed(MOUSE_BUTTON_LEFT)){
+                    CloseWindow();
+                }
+
+                // Press enter to change to ENDING screen
+
             } break;
             default: break;
         }
@@ -339,13 +461,14 @@ int main(void)
                 {
                     // TODO: Draw TITLE screen here!
                     DrawRectangle(0, 0, LARGURA_MAPA * LARGURA_BLOCO, ALTURA_MAPA * ALTURA_BLOCO, GREEN);
-                    DrawText("TITLE SCREEN", 20, 20, 40, DARKGREEN);
-                    DrawText("PRESS ENTER or TAP to JUMP to GAMEPLAY SCREEN", 120, 220, 20, DARKGREEN);
-                    DrawRectangleRec(botao1.rect, botao1.cor);
-                    DrawText("JOGAR", botao1.rect.x + botao1.rect.width/2 - MeasureText("JOGAR",20)/2, botao1.rect.y + botao1.rect.height/2 - 20/2,20, WHITE);
-                    DrawRectangleRec(botao2.rect, botao2.cor);
-                    DrawText("OPCOES", botao2.rect.x + botao2.rect.width/2 - MeasureText("OPCOES",20)/2, botao2.rect.y + botao2.rect.height/2 - 20/2,20, WHITE);
-
+                    //DrawText("TITLE SCREEN", 20, 20, 40, DARKGREEN);
+                    //DrawText("PRESS ENTER or TAP to JUMP to GAMEPLAY SCREEN", 120, 220, 20, DARKGREEN);
+                    DrawRectangleRec(botaoNOVOJ.rect, botaoNOVOJ.cor);
+                    DrawText("NOVO JOGO", botaoNOVOJ.rect.x + botaoNOVOJ.rect.width/2 - MeasureText("NOVO JOGO",20)/2, botaoNOVOJ.rect.y + botaoNOVOJ.rect.height/2 - 20/2,20, WHITE);
+                    DrawRectangleRec(botaoCARREGAR.rect, botaoCARREGAR.cor);
+                    DrawText("CARREGAR JOGO", botaoCARREGAR.rect.x + botaoCARREGAR.rect.width/2 - MeasureText("CARREGAR JOGO",20)/2, botaoCARREGAR.rect.y + botaoCARREGAR.rect.height/2 - 20/2,20, WHITE);
+                    DrawRectangleRec(botaoSAIR.rect, botaoSAIR.cor);
+                    DrawText("SAIR", botaoSAIR.rect.x + botaoSAIR.rect.width/2 - MeasureText("SAIR",20)/2, botaoSAIR.rect.y + botaoSAIR.rect.height/2 - 20/2,20, WHITE);
 
                 } break;
                 case JOGO:
@@ -362,6 +485,8 @@ int main(void)
                     MovimentoJogador(&Jogador);
                     for(int i=0; i<5; i++)
                         MovimentoInimigo(&Inimigo[i], 5);
+
+
                 } break;
                 case OPCOES:
                 {
@@ -371,6 +496,35 @@ int main(void)
 
 
                 } break;
+                case FASES:
+            {
+                DrawRectangle(0, 0, LARGURA_MAPA * LARGURA_BLOCO, ALTURA_MAPA * ALTURA_BLOCO, GREEN);
+                DrawRectangleRec(botaoFASE1.rect, botaoFASE1.cor);
+                DrawText("FASE 1", botaoFASE1.rect.x + botaoFASE1.rect.width/2 - MeasureText("FASE 1",20)/2, botaoFASE1.rect.y + botaoFASE1.rect.height/2 - 20/2,20, WHITE);
+                DrawRectangleRec(botaoFASE2.rect, botaoFASE2.cor);
+                DrawText("FASE 2", botaoFASE2.rect.x + botaoFASE2.rect.width/2 - MeasureText("FASE 2",20)/2, botaoFASE2.rect.y + botaoFASE2.rect.height/2 - 20/2,20, WHITE);
+                DrawRectangleRec(botaoFASE3.rect, botaoFASE3.cor);
+                DrawText("FASE 3", botaoFASE3.rect.x + botaoFASE3.rect.width/2 - MeasureText("FASE 3",20)/2, botaoFASE3.rect.y + botaoFASE3.rect.height/2 - 20/2,20, WHITE);
+                DrawRectangleRec(botaoFASE4.rect, botaoFASE4.cor);
+                DrawText("FASE 4", botaoFASE4.rect.x + botaoFASE4.rect.width/2 - MeasureText("FASE 4",20)/2, botaoFASE4.rect.y + botaoFASE4.rect.height/2 - 20/2,20, WHITE);
+
+            } break;
+            case PAUSE:
+            {
+                ClearBackground(RAYWHITE);
+                DrawText("OPCOES", 20, 20, 40, DARKGREEN);
+                DrawText("PRESS ENTER or TAP to JUMP to GAMEPLAY SCREEN", 120, 220, 20, DARKGREEN);
+                DrawRectangleRec(botaoCONT.rect, botaoCONT.cor);
+                DrawText("CONTINUAR", botaoCONT.rect.x + botaoCONT.rect.width/2 - MeasureText("CONTINUAR",20)/2, botaoCONT.rect.y + botaoCONT.rect.height/2 - 20/2,20, WHITE);
+                DrawRectangleRec(botaoCARREGAR2.rect, botaoCARREGAR2.cor);
+                DrawText("CARREGAR", botaoCARREGAR2.rect.x + botaoCARREGAR2.rect.width/2 - MeasureText("CARREGAR",20)/2, botaoCARREGAR2.rect.y + botaoCARREGAR2.rect.height/2 - 20/2,20, WHITE);
+                DrawRectangleRec(botaoSALVAR.rect, botaoSALVAR.cor);
+                DrawText("SALVAR", botaoSALVAR.rect.x + botaoSALVAR.rect.width/2 - MeasureText("SALVAR",20)/2, botaoSALVAR.rect.y + botaoSALVAR.rect.height/2 - 20/2,20, WHITE);
+                DrawRectangleRec(botaoVOLTAR.rect, botaoVOLTAR.cor);
+                DrawText("VOLTAR", botaoVOLTAR.rect.x + botaoVOLTAR.rect.width/2 - MeasureText("VOLTAR",20)/2, botaoVOLTAR.rect.y + botaoVOLTAR.rect.height/2 - 20/2,20, WHITE);
+                DrawRectangleRec(botaoSAIR2.rect, botaoSAIR2.cor);
+                DrawText("SAIR SEM SALVAR", botaoSAIR2.rect.x + botaoSAIR2.rect.width/2 - MeasureText("SAIR SEM SALVAR",20)/2, botaoSAIR2.rect.y + botaoSAIR2.rect.height/2 - 20/2,20, WHITE);
+            } break;
                 default: break;
         }
         EndDrawing();
