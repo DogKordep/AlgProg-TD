@@ -15,7 +15,7 @@ int vidaBase = 3;
 
 //---------enumeração para facil controle de telas--------------//
 
-typedef enum GameScreen { LOGO = 0, TITULO, JOGO, FASES, PAUSE, SALVA, GAMEOVER, FASE_GANHA, FIM} GameScreen;
+typedef enum GameScreen { LOGO = 0, TITULO, JOGO, FASES, PAUSE, SALVA,CARREGA, GAMEOVER, FASE_GANHA, FIM} GameScreen;
 
 //-----------criando estruturas para o codigo---------------//
 
@@ -93,10 +93,10 @@ void DesenhaMapa()
             {
                 DrawRectangle(j * LARGURA_BLOCO, i * ALTURA_BLOCO, LARGURA_BLOCO, ALTURA_BLOCO, SKYBLUE);
             }
-            /* if (mapa[i][j] == 'M')
+             if (mapa[i][j] == 'O')
              {
-                 DrawRectangle(j * LARGURA_BLOCO, i * ALTURA_BLOCO, LARGURA_BLOCO, ALTURA_BLOCO, RED);
-             }*/
+                 DrawRectangle(j * LARGURA_BLOCO, i * ALTURA_BLOCO, LARGURA_BLOCO, ALTURA_BLOCO, BROWN);
+             }
             if (mapa[i][j] == 'D')
             {
                 DrawRectangle(j * LARGURA_BLOCO, i * ALTURA_BLOCO, LARGURA_BLOCO, ALTURA_BLOCO, BROWN);
@@ -227,10 +227,8 @@ void MovimentoJogador(JOGADOR *Jogador)
             Jogador->recurso++;
             mapa[(int)(Jogador->y)/ALTURA_BLOCO][(int)(Jogador->x)/LARGURA_BLOCO] = ' ';
         }
-
     Jogador->dx = 0;
     Jogador->dy = 0;
-
 }
 
 //--------------função com a logica de movimentação dos inimigos----------------//
@@ -261,17 +259,18 @@ void MovimentoInimigo(INIMIGO *Inimigo, int TAM, double tempo)
             if(mapa[(int)(Inimigo->y - 1)/ALTURA_BLOCO][(int)(Inimigo->x)/LARGURA_BLOCO] != 'W' && mapa[(int)(Inimigo->y + ALTURA_BLOCO)/ALTURA_BLOCO][(int)Inimigo->x/LARGURA_BLOCO] == 'W' || mapa[(int)(Inimigo->y - 1)/ALTURA_BLOCO][(int)(Inimigo->x)/LARGURA_BLOCO] != 'H' && mapa[(int)(Inimigo->y + ALTURA_BLOCO)/ALTURA_BLOCO][(int)Inimigo->x/LARGURA_BLOCO] == 'H')
                 Inimigo->dy--;
 
-
             Inimigo->y += Inimigo->dy * 20;
             printf("Inimigo.dy = %d\n", Inimigo->dy);
 
             Inimigo->x += Inimigo->dx * 20;
             printf("Inimigo.dx = %d\n", Inimigo->dx);
 
+            if(mapa[(int)(Inimigo->y)/ALTURA_BLOCO][(int)(Inimigo->x)/LARGURA_BLOCO] == 'O'){
+                Inimigo->vida--;
+                mapa[(int)(Inimigo->y)/ALTURA_BLOCO][(int)(Inimigo->x)/LARGURA_BLOCO] = ' ';
+            }
             Inimigo++;
-
         }
-
     }
 }
 
@@ -307,11 +306,10 @@ void VidaJogador(JOGADOR *Jogador, INIMIGO *Inimigo, int TAM)
         if (fabs(Jogador->x - Inimigo->x) < LARGURA_BLOCO/2 && fabs(Jogador->y - Inimigo->y) < ALTURA_BLOCO/2)
         {
             if(Inimigo->vida == 1)
-            Jogador->vida--;
+                Jogador->vida--;
         }
         Inimigo++;
     }
-
 }
 
 //----função que reconhece se algum inimigo alcançou a base------//
@@ -468,7 +466,7 @@ int main(void)
             if(botaopress(botaoCARREGAR) && IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
             {
                 //Carregar jogo salvo
-                //currentScreen = ??;//transfere para a tela de selecionar save
+                currentScreen = CARREGA;//transfere para a tela de selecionar save
                 }
 
             if(botaopress(botaoSAIR)) botaoSAIR.cor = WHITE;  //botão sair do jogo
@@ -683,6 +681,45 @@ int main(void)
             }
         }
         break;
+        case CARREGA:
+        {
+            if(botaopress(botaoSAVE1)) botaoSAVE1.cor = WHITE;
+            else botaoSAVE1.cor = YELLOW;
+
+            if(botaopress(botaoSAVE1) && IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
+            {
+                //salva no slot 1
+                currentScreen = PAUSE;
+            }
+
+            if(botaopress(botaoSAVE2)) botaoSAVE2.cor = WHITE;
+            else botaoSAVE2.cor = YELLOW;
+
+            if(botaopress(botaoSAVE2) && IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
+            {
+                //salva no slot 2
+                currentScreen = PAUSE;
+            }
+
+            if(botaopress(botaoSAVE3)) botaoSAVE3.cor = WHITE;
+            else botaoSAVE3.cor = YELLOW;
+
+            if(botaopress(botaoSAVE3) && IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
+            {
+                //salva no slot 3
+                currentScreen = PAUSE;
+            }
+
+            if(botaopress(botaoSAVE4)) botaoSAVE4.cor = WHITE;
+            else botaoSAVE4.cor = YELLOW;
+
+            if(botaopress(botaoSAVE4) && IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
+            {
+                //salva no slot 4
+                currentScreen = PAUSE;
+            }
+        }
+        break;
         default:
             break;
         }
@@ -745,10 +782,10 @@ int main(void)
                     vidaBase = 3;
                 }
 
-                //if(IsKeyPressed(KEY_G)){
-                //    Jogador.recurso--;
-                //    mapa[(int)(Inimig.y)/ALTURA_BLOCO][(int)(Inimigo->x)/LARGURA_BLOCO] = 'O';
-                //}
+                if(IsKeyPressed(KEY_G) && Jogador.recurso>0){
+                    Jogador.recurso--;
+                    mapa[(int)(Jogador.y)/ALTURA_BLOCO][(int)(Jogador.x)/LARGURA_BLOCO] = 'O';
+                }
 
         }
         break;
@@ -822,6 +859,20 @@ int main(void)
             DrawText("VOCE MORREU", 300, 200, 80, WHITE);
             DrawRectangleRec(botaoVOLTAR.rect, botaoVOLTAR.cor);
             DrawText("VOLTAR", botaoVOLTAR.rect.x + botaoVOLTAR.rect.width/2 - MeasureText("VOLTAR",20)/2, botaoVOLTAR.rect.y + botaoVOLTAR.rect.height/2 - 20/2,20, BLACK);
+
+        }
+        break;
+        case CARREGA:
+        {
+            ClearBackground(DARKBLUE);
+            DrawRectangleRec(botaoSAVE1.rect, botaoSAVE1.cor);
+            DrawText("SLOT 1", botaoSAVE1.rect.x + botaoSAVE1.rect.width/2 - MeasureText("SLOT 1",20)/2, botaoSAVE1.rect.y + botaoSAVE1.rect.height/2 - 20/2,20, BLACK);
+            DrawRectangleRec(botaoSAVE2.rect, botaoSAVE2.cor);
+            DrawText("SLOT 2", botaoSAVE2.rect.x + botaoSAVE2.rect.width/2 - MeasureText("SLOT 2",20)/2, botaoSAVE2.rect.y + botaoSAVE2.rect.height/2 - 20/2,20, BLACK);
+            DrawRectangleRec(botaoSAVE3.rect, botaoSAVE3.cor);
+            DrawText("SLOT 3", botaoSAVE3.rect.x + botaoSAVE3.rect.width/2 - MeasureText("SLOT 3",20)/2, botaoSAVE3.rect.y + botaoSAVE3.rect.height/2 - 20/2,20, BLACK);
+            DrawRectangleRec(botaoSAVE4.rect, botaoSAVE4.cor);
+            DrawText("SLOT 4", botaoSAVE4.rect.x + botaoSAVE4.rect.width/2 - MeasureText("SLOT 4",20)/2, botaoSAVE4.rect.y + botaoSAVE4.rect.height/2 - 20/2,20, BLACK);
 
         }
         break;
