@@ -30,7 +30,8 @@ typedef struct Inimigo
 {
     float x,y;
     int dx, dy;
-} INIMIGO;
+    int vida;
+}INIMIGO;
 
 typedef struct pos_J
 {
@@ -38,20 +39,10 @@ typedef struct pos_J
     float y;
     float dx, dy;
     int vida;
+    int recurso;
 } JOGADOR;
 
-typedef struct estado{
-
-    JOGADOR jogador;
-    INIMIGO inimigo;
-    int fases_ganhas;
-
-
-
-}ESTADO;
-
-//--------------funcções do codigo(explicação ao chama-las a primeira vez)----------------//
-
+//------função que recebe como parametro um nome de um arquivo txt, abre o arquivo e o tranfere para um matriz de char que será utilizada no logica do codigo------//
 void carregaMapa(const char *arquivoMapa)
 {
     FILE *file = fopen(arquivoMapa, "r");
@@ -79,6 +70,7 @@ void carregaMapa(const char *arquivoMapa)
     fclose(file);
 }
 
+//--------função que utiliza o matriz criada na função carregaMapa e desanha o mapa-----------//
 void DesenhaMapa()
 {
     for (int i = 0; i < ALTURA_MAPA; i++)
@@ -113,6 +105,7 @@ void DesenhaMapa()
     }
 }
 
+//-------função que reconhece posição inicial de cada inimigo a partir de informações da //matriz gerada pela função carregaMapa---------//
 int InitPosicaoInimigo(INIMIGO *Inimigo)
 {
     int n=0;
@@ -121,22 +114,22 @@ int InitPosicaoInimigo(INIMIGO *Inimigo)
     {
         for (int j = 0; j < LARGURA_MAPA; j++)
         {
-
             if (mapa[i][j] == 'M')
             {
                 Inimigo->x = j * LARGURA_BLOCO;
                 Inimigo->y = i * ALTURA_BLOCO;
                 Inimigo->dx = -1;
                 Inimigo->dy = 0;
+                Inimigo->vida = 1;
                 Inimigo++;
                 n++;
             }
         }
     }
     return n;
-
 }
 
+//-------função que reconhece posição inicial do jogador a partir de informações da matriz gerada pela função carregaMapa-------//
 void InitPosicaoJogador(JOGADOR *Jogador)
 {
     for (int i = 0; i < ALTURA_MAPA; i++)
@@ -153,6 +146,7 @@ void InitPosicaoJogador(JOGADOR *Jogador)
     }
 }
 
+// função com a logica de movimentação do personagem jogavel
 void MovimentoJogador(JOGADOR *Jogador)
 {
     if (IsKeyDown(KEY_UP) && Jogador->y > 0 && mapa[(int)(Jogador->y - 1)/ALTURA_BLOCO][(int)Jogador->x/LARGURA_BLOCO] != 'W' &&
@@ -228,19 +222,24 @@ void MovimentoJogador(JOGADOR *Jogador)
         }
     }
 
+    if(mapa[(int)(Jogador->y)/ALTURA_BLOCO][(int)(Jogador->x)/LARGURA_BLOCO] == 'R')
+        {
+            Jogador->recurso++;
+            mapa[(int)(Jogador->y)/ALTURA_BLOCO][(int)(Jogador->x)/LARGURA_BLOCO] = ' ';
+        }
+
     Jogador->dx = 0;
     Jogador->dy = 0;
 
 }
 
+//--------------função com a logica de movimentação dos inimigos----------------//
 void MovimentoInimigo(INIMIGO *Inimigo, int TAM, double tempo)
 {
-    if(fmod(tempo,1.5) < 0.016)
+    if(fmod(tempo,0.1) < 0.016)
     {
-
         for(int i = 0; i < TAM; i++)
         {
-
             if(mapa[(int)(Inimigo->y)/ALTURA_BLOCO][(int)(Inimigo->x - 1)/LARGURA_BLOCO] == 'W' &&
                     mapa[(int)Inimigo->y/ALTURA_BLOCO][(int)(Inimigo->x + LARGURA_BLOCO)/LARGURA_BLOCO] != 'W' ||
                     mapa[(int)Inimigo->y/ALTURA_BLOCO][(int)(Inimigo->x + LARGURA_BLOCO)/LARGURA_BLOCO] != 'H' &&
@@ -276,32 +275,38 @@ void MovimentoInimigo(INIMIGO *Inimigo, int TAM, double tempo)
     }
 }
 
+//---------função para desenhar o inimigo----------------//
 void DesenhaInimigo(INIMIGO *Inimigo, int TAM)
 {
     for(int i = 0; i < TAM; i++)
     {
+        if(Inimigo->vida==1)
         DrawRectangle(Inimigo->x, Inimigo->y, LARGURA_BLOCO, ALTURA_BLOCO, RED);
         Inimigo++;
     }
 }
 
+//-----------função Iniciabotão, função void que recebe como parametro um tamanho de um retangulo e uma cor e então cria um botão-----------//
 void IniciaBotao(BOTAO *botao, Rectangle rect, Color cor)
 {
     botao->rect = rect;
     botao->cor = cor;
 }
 
+//---------função botaopress é uma função do tipo booleana que reconhece o mouse emcima do botao-------------//
 bool botaopress(BOTAO botao)
 {
     return CheckCollisionPointRec(GetMousePosition(), botao.rect);
 }
 
+//-----que reconhece se o jogador tocou um inimigo e recebeu dano ------//
 void VidaJogador(JOGADOR *Jogador, INIMIGO *Inimigo, int TAM)
 {
     for(int i=0; i<TAM; i++)
     {
         if (fabs(Jogador->x - Inimigo->x) < LARGURA_BLOCO/2 && fabs(Jogador->y - Inimigo->y) < ALTURA_BLOCO/2)
         {
+            if(Inimigo->vida == 1)
             Jogador->vida--;
         }
         Inimigo++;
@@ -309,20 +314,17 @@ void VidaJogador(JOGADOR *Jogador, INIMIGO *Inimigo, int TAM)
 
 }
 
+//----função que reconhece se algum inimigo alcançou a base------//
 void VidaBase(INIMIGO *Inimigo, int TAM)
 {
     for(int i=0; i<TAM; i++)
     {
-        if(mapa[(int)(Inimigo->y)/ALTURA_BLOCO][(int)(Inimigo->x)/LARGURA_BLOCO] == 'S')
+        if(mapa[(int)(Inimigo->y)/ALTURA_BLOCO][(int)(Inimigo->x)/LARGURA_BLOCO] == 'S' && Inimigo->vida==1)
         {
             vidaBase--;
+            Inimigo->vida--;
         }
         Inimigo++;
-    }
-
-    if(vidaBase <= 0)
-    {
-        CloseWindow();
     }
 
     char textoVidasBase[20];
@@ -354,7 +356,6 @@ int main(void)
 
     InitWindow(LARGURA_MAPA * LARGURA_BLOCO, ALTURA_MAPA * ALTURA_BLOCO, "TowerDefense");
 
-//-----------------função Iniciabotão, função void que recebe como parametro um tamanho de um retangulo e uma cor e então cria um botão---------------//
 
     IniciaBotao(&botaoNOVOJ,(Rectangle)
     {
@@ -446,20 +447,19 @@ int main(void)
             // espera 2 seconds (120 frames) antes de ir para a janela TITULO
             if (framesCounter > 300)
             {
-                currentScreen = TITULO;
+                currentScreen = TITULO; //transfere para a tela do menu inicial
             }
         }
         break;
         case TITULO:
         {
 //---------------------------------tela de menu principal do jogo--------------------------------------------//
-//---------função botaopress é uma função do tipo booleana que reconhece o mouse emcima do botao-------------//
             if(botaopress(botaoNOVOJ)) botaoNOVOJ.cor = WHITE;
             else botaoNOVOJ.cor = YELLOW;
 
             if(botaopress(botaoNOVOJ) && IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) //botão de criar um novo jogo
             {
-                currentScreen = FASES;
+                currentScreen = FASES;//transfere para a tela de selecionar fase
             }
 
             if(botaopress(botaoCARREGAR)) botaoCARREGAR.cor = WHITE; //botão de carregar um jogo salvo
@@ -468,15 +468,15 @@ int main(void)
             if(botaopress(botaoCARREGAR) && IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
             {
                 //Carregar jogo salvo
-                currentScreen = JOGO;
-            }
+                //currentScreen = ??;//transfere para a tela de selecionar save
+                }
 
             if(botaopress(botaoSAIR)) botaoSAIR.cor = WHITE;  //botão sair do jogo
             else botaoSAIR.cor = YELLOW;
 
             if(botaopress(botaoSAIR) && IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
             {
-                CloseWindow();
+                CloseWindow();//fecha o jogo
             }
 
 
@@ -487,7 +487,7 @@ int main(void)
 //--------------------o jogo em si, mais datelhas no outro switch case-----------------------//
             if (IsKeyPressed(KEY_TAB))  //se apertar a tecla tab pausa o jogo
             {
-                currentScreen = PAUSE;
+                currentScreen = PAUSE;////transfere para a tela de pause
             }
         }
         break;
@@ -501,11 +501,8 @@ int main(void)
             {
                 carregaMapa("mapa1.txt");
                 InitPosicaoJogador(&Jogador);
-
                 InitPosicaoInimigo(Inimigo);
-
-                currentScreen = JOGO;
-
+                currentScreen = JOGO;//transfere para a tela de gameplay
             }
 
             if(botaopress(botaoFASE2)) botaoFASE2.cor = WHITE;
@@ -519,7 +516,6 @@ int main(void)
                 currentScreen = JOGO;
             }
 
-
             if(botaopress(botaoFASE3)) botaoFASE3.cor = WHITE;
             else botaoFASE3.cor = YELLOW;
 
@@ -527,10 +523,7 @@ int main(void)
             {
                 carregaMapa("mapa3.txt");
                 InitPosicaoJogador(&Jogador);
-
-                //     int num = InitPosicaoInimigo(&Inimigo);
-
-
+                InitPosicaoInimigo(Inimigo);
                 currentScreen = JOGO;
             }
 
@@ -541,8 +534,7 @@ int main(void)
             {
                 carregaMapa("mapa4.txt");
                 InitPosicaoJogador(&Jogador);
-                for(int i=0; i<5; i++)
-                    InitPosicaoInimigo(&Inimigo[i]);
+                InitPosicaoInimigo(Inimigo);
                 currentScreen = JOGO;
             }
         }
@@ -674,7 +666,9 @@ int main(void)
             if(botaopress(botaoVOLTAR) && IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
             {
                 currentScreen = TITULO;
+//CAPETA
             }
+
 
         }
         break;
@@ -744,10 +738,17 @@ int main(void)
                     currentScreen = GAMEOVER;
                     Jogador.vida++;
                 }
+                VidaBase(Inimigo, 5);
+                if(vidaBase <= 0)
+                {
+                    currentScreen = GAMEOVER;
+                    vidaBase = 3;
+                }
 
-
-
-            //      VidaBase(Inimigo, 5);
+                //if(IsKeyPressed(KEY_G)){
+                //    Jogador.recurso--;
+                //    mapa[(int)(Inimig.y)/ALTURA_BLOCO][(int)(Inimigo->x)/LARGURA_BLOCO] = 'O';
+                //}
 
         }
         break;
