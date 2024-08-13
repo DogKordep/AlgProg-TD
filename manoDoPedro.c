@@ -232,9 +232,9 @@ void MovimentoJogador(JOGADOR *Jogador)
 }
 
 //--------------função com a logica de movimentação dos inimigos----------------//
-void MovimentoInimigo(INIMIGO *Inimigo, int TAM, double tempo)
+void MovimentoInimigo(INIMIGO *Inimigo, int TAM, double tempo, int *n2)
 {
-    if(fmod(tempo,0.1) < 0.016)
+    if(fmod(tempo,0.15) < 0.016)
     {
         for(int i = 0; i < TAM; i++)
         {
@@ -265,8 +265,9 @@ void MovimentoInimigo(INIMIGO *Inimigo, int TAM, double tempo)
             Inimigo->x += Inimigo->dx * 20;
             printf("Inimigo.dx = %d\n", Inimigo->dx);
 
-            if(mapa[(int)(Inimigo->y)/ALTURA_BLOCO][(int)(Inimigo->x)/LARGURA_BLOCO] == 'O'){
+            if(mapa[(int)(Inimigo->y)/ALTURA_BLOCO][(int)(Inimigo->x)/LARGURA_BLOCO] == 'O' && Inimigo->vida == 1){
                 Inimigo->vida--;
+                *n2=*n2+1;
                 mapa[(int)(Inimigo->y)/ALTURA_BLOCO][(int)(Inimigo->x)/LARGURA_BLOCO] = ' ';
             }
             Inimigo++;
@@ -347,6 +348,7 @@ int main(void)
     double tempo = 0;
     GameScreen currentScreen = LOGO;
     int framesCounter = 0;
+    int n=0,n2=0;
     char matmapa[10];
 
 //----------------setando FPS e tamanhho da janela do jogo-------------------//
@@ -502,6 +504,7 @@ int main(void)
                 carregaMapa(matmapa);
                 InitPosicaoJogador(&Jogador);
                 InitPosicaoInimigo(Inimigo);
+                n = InitPosicaoInimigo(Inimigo);
                 currentScreen = JOGO;//transfere para a tela de gameplay
             }
 
@@ -514,6 +517,7 @@ int main(void)
                 carregaMapa(matmapa);
                 InitPosicaoJogador(&Jogador);
                 InitPosicaoInimigo(Inimigo);
+                n = InitPosicaoInimigo(Inimigo);
                 currentScreen = JOGO;
             }
 
@@ -525,6 +529,7 @@ int main(void)
                 carregaMapa("mapa3.txt");
                 InitPosicaoJogador(&Jogador);
                 InitPosicaoInimigo(Inimigo);
+                n = InitPosicaoInimigo(Inimigo);
                 currentScreen = JOGO;
             }
 
@@ -536,6 +541,7 @@ int main(void)
                 carregaMapa("mapa4.txt");
                 InitPosicaoJogador(&Jogador);
                 InitPosicaoInimigo(Inimigo);
+                n = InitPosicaoInimigo(Inimigo);
                 currentScreen = JOGO;
             }
         }
@@ -888,7 +894,7 @@ int main(void)
 
             MovimentoJogador(&Jogador);
 
-            MovimentoInimigo(Inimigo, 5, tempo);
+            MovimentoInimigo(Inimigo, 5, tempo, &n2);
 
             VidaJogador(&Jogador, Inimigo, 5);
 
@@ -907,6 +913,9 @@ int main(void)
                 if(IsKeyPressed(KEY_G) && Jogador.recurso>0){
                     Jogador.recurso--;
                     mapa[(int)(Jogador.y)/ALTURA_BLOCO][(int)(Jogador.x)/LARGURA_BLOCO] = 'O';
+                }
+                if(n==n2){
+                    currentScreen = FASE_GANHA;
                 }
 
         }
