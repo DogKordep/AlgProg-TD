@@ -71,7 +71,7 @@ void carregaMapa(const char *arquivoMapa)
 }
 
 //--------função que utiliza o matriz criada na função carregaMapa e desanha o mapa-----------//
-void DesenhaMapa()
+void DesenhaMapa(Texture2D parede,Texture2D portal,Texture2D bomba,Texture2D recurso,Texture2D base)
 {
     for (int i = 0; i < ALTURA_MAPA; i++)
     {
@@ -79,23 +79,28 @@ void DesenhaMapa()
         {
             if (mapa[i][j] == 'W')
             {
-                DrawRectangle(j * LARGURA_BLOCO, i * ALTURA_BLOCO, LARGURA_BLOCO, ALTURA_BLOCO, GRAY);
+                //DrawRectangle(j * LARGURA_BLOCO, i * ALTURA_BLOCO, LARGURA_BLOCO, ALTURA_BLOCO, GRAY);
+                DrawTexture(parede, j * LARGURA_BLOCO, i * ALTURA_BLOCO , WHITE);
             }
             if (mapa[i][j] == 'R')
             {
-                DrawRectangle(j * LARGURA_BLOCO, i * ALTURA_BLOCO, LARGURA_BLOCO, ALTURA_BLOCO, GREEN);
+                DrawTexture(recurso, j * LARGURA_BLOCO, i * ALTURA_BLOCO , WHITE);
+                //DrawRectangle(j * LARGURA_BLOCO, i * ALTURA_BLOCO, LARGURA_BLOCO, ALTURA_BLOCO, GREEN);
             }
             if (mapa[i][j] == 'H')
             {
-                DrawRectangle(j * LARGURA_BLOCO, i * ALTURA_BLOCO, LARGURA_BLOCO, ALTURA_BLOCO, BLACK);
+                DrawTexture(portal, j * LARGURA_BLOCO, i * ALTURA_BLOCO , WHITE);
+                //DrawRectangle(j * LARGURA_BLOCO, i * ALTURA_BLOCO, LARGURA_BLOCO, ALTURA_BLOCO, BLACK);
             }
             if (mapa[i][j] == 'S')
             {
-                DrawRectangle(j * LARGURA_BLOCO, i * ALTURA_BLOCO, LARGURA_BLOCO, ALTURA_BLOCO, SKYBLUE);
+                 DrawTexture(base, j * LARGURA_BLOCO, i * ALTURA_BLOCO , WHITE);
+                //DrawRectangle(j * LARGURA_BLOCO, i * ALTURA_BLOCO, LARGURA_BLOCO, ALTURA_BLOCO, SKYBLUE);
             }
              if (mapa[i][j] == 'O')
              {
-                 DrawRectangle(j * LARGURA_BLOCO, i * ALTURA_BLOCO, LARGURA_BLOCO, ALTURA_BLOCO, BROWN);
+                 DrawTexture(bomba, j * LARGURA_BLOCO, i * ALTURA_BLOCO , WHITE);
+                 //DrawRectangle(j * LARGURA_BLOCO, i * ALTURA_BLOCO, LARGURA_BLOCO, ALTURA_BLOCO, BROWN);
              }
             if (mapa[i][j] == 'D')
             {
@@ -276,12 +281,13 @@ void MovimentoInimigo(INIMIGO *Inimigo, int TAM, double tempo, int *n2)
 }
 
 //---------função para desenhar o inimigo----------------//
-void DesenhaInimigo(INIMIGO *Inimigo, int TAM)
+void DesenhaInimigo(INIMIGO *Inimigo, int TAM,Texture2D inimigo)
 {
     for(int i = 0; i < TAM; i++)
     {
         if(Inimigo->vida==1)
-        DrawRectangle(Inimigo->x, Inimigo->y, LARGURA_BLOCO, ALTURA_BLOCO, RED);
+        DrawTexture(inimigo, Inimigo->x, Inimigo->y , WHITE);
+        //DrawRectangle(Inimigo->x, Inimigo->y, LARGURA_BLOCO, ALTURA_BLOCO, RED);
         Inimigo++;
     }
 }
@@ -331,7 +337,6 @@ void VidaBase(INIMIGO *Inimigo, int TAM)
     DrawText(textoVidasBase, 100, 200, 50, ORANGE);
 }
 
-
 int main(void)
 {
 //--------------Criando variaves do tipo struct BOTAO para criar os botoes do jogo----------------//
@@ -355,8 +360,16 @@ int main(void)
 
     SetTargetFPS(60);
 
+
     InitWindow(LARGURA_MAPA * LARGURA_BLOCO, ALTURA_MAPA * ALTURA_BLOCO, "TowerDefense");
 
+    Texture2D parede = LoadTexture("texturas/parede.png");
+    Texture2D portal = LoadTexture("texturas/portal.png");
+    Texture2D bomba = LoadTexture("texturas/bomba.png");
+    Texture2D recurso = LoadTexture("texturas/recurso.png");
+    Texture2D base = LoadTexture("texturas/base.png");
+    Texture2D inimigo = LoadTexture("texturas/inimigo.png");
+    Texture2D heroi = LoadTexture("texturas/heroi.png");
 
     IniciaBotao(&botaoNOVOJ,(Rectangle)
     {
@@ -727,7 +740,6 @@ int main(void)
             if(botaopress(botaoVOLTAR) && IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
             {
                 currentScreen = TITULO;
-//CAPETA
             }
 
 
@@ -884,13 +896,14 @@ int main(void)
         {
             // TODO: Draw GAMEPLAY screen here!
 
-            ClearBackground(RAYWHITE);
-            DesenhaMapa();
+            ClearBackground(LIGHTGRAY);
+            DesenhaMapa(parede,portal,bomba,recurso,base);
 
 
-            DesenhaInimigo(Inimigo, 5);
+            DesenhaInimigo(Inimigo, 5, inimigo);
 
-            DrawRectangle(Jogador.x, Jogador.y, LARGURA_BLOCO, ALTURA_BLOCO, DARKBLUE);
+            DrawTexture(heroi, Jogador.x, Jogador.y , WHITE);
+            //DrawRectangle(Jogador.x, Jogador.y, LARGURA_BLOCO, ALTURA_BLOCO, DARKBLUE);
 
             MovimentoJogador(&Jogador);
 
