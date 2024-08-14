@@ -320,7 +320,7 @@ void VidaJogador(JOGADOR *Jogador, INIMIGO *Inimigo, int TAM)
 }
 
 //----função que reconhece se algum inimigo alcançou a base------//
-void VidaBase(INIMIGO *Inimigo, int TAM)
+void VidaBase(INIMIGO *Inimigo, int TAM, int *n2)
 {
     for(int i=0; i<TAM; i++)
     {
@@ -328,6 +328,7 @@ void VidaBase(INIMIGO *Inimigo, int TAM)
         {
             vidaBase--;
             Inimigo->vida--;
+            *n2 = *n2+1;
         }
         Inimigo++;
     }
@@ -652,7 +653,7 @@ int main(void)
 
                 fwrite(&Jogador, sizeof(JOGADOR), 1, save1);
 
-                fwrite(&Inimigo, sizeof(INIMIGO), 5, save1);
+                fwrite(&Inimigo, sizeof(INIMIGO), n, save1);
 
                 fclose(save1);
 
@@ -675,7 +676,7 @@ int main(void)
 
                 fwrite(&Jogador, sizeof(JOGADOR), 1, save2);
 
-                fwrite(&Inimigo, sizeof(INIMIGO), 5, save2);
+                fwrite(&Inimigo, sizeof(INIMIGO), n, save2);
 
                 fclose(save2);
 
@@ -697,7 +698,7 @@ int main(void)
 
                 fwrite(&Jogador, sizeof(JOGADOR), 1, save3);
 
-                fwrite(&Inimigo, sizeof(INIMIGO), 5, save3);
+                fwrite(&Inimigo, sizeof(INIMIGO), n, save3);
 
                 fclose(save3);
 
@@ -719,7 +720,7 @@ int main(void)
 
                 fwrite(&Jogador, sizeof(JOGADOR), 1, save4);
 
-                fwrite(&Inimigo, sizeof(INIMIGO), 5, save4);
+                fwrite(&Inimigo, sizeof(INIMIGO), n, save4);
 
                 fclose(save4);
 
@@ -916,7 +917,7 @@ int main(void)
                     currentScreen = GAMEOVER;
                     Jogador.vida++;
                 }
-                VidaBase(Inimigo, 5);
+                VidaBase(Inimigo, 5,&n2);
                 if(vidaBase <= 0)
                 {
                     currentScreen = GAMEOVER;
