@@ -71,7 +71,7 @@ void carregaMapa(const char *arquivoMapa)
 }
 
 //--------função que utiliza o matriz criada na função carregaMapa e desanha o mapa-----------//
-void DesenhaMapa(Texture2D parede,Texture2D portal,Texture2D bomba,Texture2D recurso,Texture2D base)
+void DesenhaMapa(Texture2D parede,Texture2D portal,Texture2D bomba,Texture2D recurso,Texture2D base,Texture2D grama)
 {
     for (int i = 0; i < ALTURA_MAPA; i++)
     {
@@ -105,6 +105,11 @@ void DesenhaMapa(Texture2D parede,Texture2D portal,Texture2D bomba,Texture2D rec
             if (mapa[i][j] == 'D')
             {
                 DrawRectangle(j * LARGURA_BLOCO, i * ALTURA_BLOCO, LARGURA_BLOCO, ALTURA_BLOCO, BROWN);
+            }
+            if (mapa[i][j] == ' ' || mapa[i][j] == 'M' || mapa[i][j] == 'J')
+            {
+                DrawTexture(grama, j * LARGURA_BLOCO, i * ALTURA_BLOCO , WHITE);
+                //DrawRectangle(j * LARGURA_BLOCO, i * ALTURA_BLOCO, LARGURA_BLOCO, ALTURA_BLOCO, BROWN);
             }
         }
     }
@@ -371,6 +376,7 @@ int main(void)
     Texture2D base = LoadTexture("texturas/base.png");
     Texture2D inimigo = LoadTexture("texturas/inimigo.png");
     Texture2D heroi = LoadTexture("texturas/heroi.png");
+    Texture2D grama = LoadTexture("texturas/grama.png");
 
     IniciaBotao(&botaoNOVOJ,(Rectangle)
     {
@@ -898,7 +904,7 @@ int main(void)
             // TODO: Draw GAMEPLAY screen here!
 
             ClearBackground(LIGHTGRAY);
-            DesenhaMapa(parede,portal,bomba,recurso,base);
+            DesenhaMapa(parede,portal,bomba,recurso,base,grama);
 
 
             DesenhaInimigo(Inimigo, 5, inimigo);
