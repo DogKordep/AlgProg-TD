@@ -520,7 +520,7 @@ int main(void)
 
             if(botaopress(botaoFASE1) && IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
             {
-                strcpy(matmapa, "mapa1.txt");
+                strcpy(matmapa, "Mapas/mapa1.txt");
                 carregaMapa(matmapa);
                 InitPosicaoJogador(&Jogador);
                 InitPosicaoInimigo(Inimigo);
@@ -533,7 +533,7 @@ int main(void)
 
             if(botaopress(botaoFASE2) && IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
             {
-                strcpy(matmapa, "mapa2.txt");
+                strcpy(matmapa, "Mapas/mapa2.txt");
                 carregaMapa(matmapa);
                 InitPosicaoJogador(&Jogador);
                 InitPosicaoInimigo(Inimigo);
@@ -546,7 +546,7 @@ int main(void)
 
             if(botaopress(botaoFASE3) && IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
             {
-                carregaMapa("mapa3.txt");
+                carregaMapa("Mapas/mapa3.txt");
                 InitPosicaoJogador(&Jogador);
                 InitPosicaoInimigo(Inimigo);
                 n = InitPosicaoInimigo(Inimigo);
@@ -558,7 +558,7 @@ int main(void)
 
             if(botaopress(botaoFASE4) && IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
             {
-                carregaMapa("mapa4.txt");
+                carregaMapa("Mapas/mapa4.txt");
                 InitPosicaoJogador(&Jogador);
                 InitPosicaoInimigo(Inimigo);
                 n = InitPosicaoInimigo(Inimigo);
@@ -652,7 +652,7 @@ int main(void)
 
                     FILE *save1;
 
-                if(!(save1 = fopen("TOWDEFSAVE1.bin","wb")))
+                if(!(save1 = fopen("Saves/TOWDEFSAVE1.bin","wb")))
                    printf("ERRO NA ABERTURA DO SAVE");
 
                 fwrite(&n, sizeof(int), 1, save1);
@@ -681,7 +681,7 @@ int main(void)
 
                 FILE *save2;
 
-                if(!(save2 = fopen("TOWDEFSAVE2.bin","wb")))
+                if(!(save2 = fopen("Saves/TOWDEFSAVE2.bin","wb")))
                    printf("ERRO NA ABERTURA DO SAVE");
 
                 fwrite(&n, sizeof(int), 1, save2);
@@ -709,7 +709,7 @@ int main(void)
                 //salva no slot 3
               FILE *save3;
 
-                if(!(save3  = fopen("TOWDEFSAVE3.bin","wb")))
+                if(!(save3  = fopen("Saves/TOWDEFSAVE3.bin","wb")))
                    printf("ERRO NA ABERTURA DO SAVE");
 
                 fwrite(&n, sizeof(int), 1, save3);
@@ -737,7 +737,7 @@ int main(void)
                 //salva no slot 4
               FILE *save4;
 
-                if(!(save4  = fopen("TOWDEFSAVE4.bin","wb")))
+                if(!(save4  = fopen("Saves/TOWDEFSAVE4.bin","wb")))
                    printf("ERRO NA ABERTURA DO SAVE");
 
                 fwrite(&n, sizeof(int), 1, save4);
@@ -793,7 +793,7 @@ int main(void)
 
                 FILE *save1;
 
-                if(!(save1 = fopen("TOWDEFSAVE1.bin","rb")))
+                if(!(save1 = fopen("Saves/TOWDEFSAVE1.bin","rb")))
                     printf("ERRO AO LER ARQUIVO");
 
                 fread(&n, sizeof(int), 1, save1);
@@ -823,7 +823,7 @@ int main(void)
 
                 FILE *save2;
 
-                if(!(save2 = fopen("TOWDEFSAVE2.bin","rb")))
+                if(!(save2 = fopen("Saves/TOWDEFSAVE2.bin","rb")))
                     printf("ERRO AO LER ARQUIVO");
 
                 fread(&n, sizeof(int), 1, save2);
@@ -853,7 +853,7 @@ int main(void)
                 //salva no slot 3
                 FILE *save3;
 
-                if(!(save3 = fopen("TOWDEFSAVE3.bin","rb")))
+                if(!(save3 = fopen("Saves/TOWDEFSAVE3.bin","rb")))
                     printf("ERRO AO LER ARQUIVO");
 
                 fread(&n, sizeof(int), 1, save3);
@@ -881,7 +881,7 @@ int main(void)
                 //salva no slot 4
                 FILE *save4;
 
-                if(!(save4 = fopen("TOWDEFSAVE4.bin","rb")))
+                if(!(save4 = fopen("Saves/TOWDEFSAVE4.bin","rb")))
                     printf("ERRO AO LER ARQUIVO");
 
                fread(&n, sizeof(int), 1, save4);
