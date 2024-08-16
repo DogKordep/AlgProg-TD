@@ -499,7 +499,7 @@ int main(void)
             {
                 CloseWindow();//fecha o jogo
             }
-
+            n2 = 0;
 
         }
         break;
@@ -589,7 +589,7 @@ int main(void)
             if(botaopress(botaoCARREGAR2) && IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
             {
                 //carregar jogo salvo
-                currentScreen = JOGO;
+                currentScreen = CARREGA;
             }
 
             if(botaopress(botaoSALVAR)) botaoSALVAR.cor = WHITE;
@@ -655,11 +655,17 @@ int main(void)
                 if(!(save1 = fopen("TOWDEFSAVE1.bin","wb")))
                    printf("ERRO NA ABERTURA DO SAVE");
 
-                fwrite(&matmapa, sizeof(matmapa), 1, save1);
+                fwrite(&n, sizeof(int), 1, save1);
+
+                for (int i = 0; i < ALTURA_MAPA; ++i) {
+                    fwrite(mapa[i], sizeof(int), LARGURA_MAPA, save1);
+                }
 
                 fwrite(&Jogador, sizeof(JOGADOR), 1, save1);
 
                 fwrite(&Inimigo, sizeof(INIMIGO), n, save1);
+
+                fwrite(&n2, sizeof(int), 1, save1);
 
                 fclose(save1);
 
@@ -678,11 +684,17 @@ int main(void)
                 if(!(save2 = fopen("TOWDEFSAVE2.bin","wb")))
                    printf("ERRO NA ABERTURA DO SAVE");
 
-                fwrite(&matmapa, sizeof(matmapa), 1, save2);
+                fwrite(&n, sizeof(int), 1, save2);
+
+                for (int i = 0; i < ALTURA_MAPA; ++i) {
+                    fwrite(mapa[i], sizeof(int), LARGURA_MAPA, save2);
+                }
 
                 fwrite(&Jogador, sizeof(JOGADOR), 1, save2);
 
                 fwrite(&Inimigo, sizeof(INIMIGO), n, save2);
+
+                fwrite(&n2, sizeof(int), 1, save2);
 
                 fclose(save2);
 
@@ -700,11 +712,17 @@ int main(void)
                 if(!(save3  = fopen("TOWDEFSAVE3.bin","wb")))
                    printf("ERRO NA ABERTURA DO SAVE");
 
-                fwrite(&matmapa, sizeof(matmapa), 1, save3);
+                fwrite(&n, sizeof(int), 1, save3);
+
+                for (int i = 0; i < ALTURA_MAPA; ++i) {
+                    fwrite(mapa[i], sizeof(int), LARGURA_MAPA, save3);
+                }
 
                 fwrite(&Jogador, sizeof(JOGADOR), 1, save3);
 
                 fwrite(&Inimigo, sizeof(INIMIGO), n, save3);
+
+                fwrite(&n2, sizeof(int), 1, save3);
 
                 fclose(save3);
 
@@ -722,20 +740,21 @@ int main(void)
                 if(!(save4  = fopen("TOWDEFSAVE4.bin","wb")))
                    printf("ERRO NA ABERTURA DO SAVE");
 
-                fwrite(&matmapa, sizeof(matmapa), 1, save4);
+                fwrite(&n, sizeof(int), 1, save4);
+
+                for (int i = 0; i < ALTURA_MAPA; ++i) {
+                    fwrite(mapa[i], sizeof(int), LARGURA_MAPA, save4);
+                }
 
                 fwrite(&Jogador, sizeof(JOGADOR), 1, save4);
 
                 fwrite(&Inimigo, sizeof(INIMIGO), n, save4);
 
+                fwrite(&n2, sizeof(int), 1, save4);
+
                 fclose(save4);
 
                 currentScreen = PAUSE;
-            }
-
-            if(IsKeyPressed(KEY_TAB))
-            {
-                currentScreen = JOGO;
             }
         }
         break;
@@ -777,13 +796,17 @@ int main(void)
                 if(!(save1 = fopen("TOWDEFSAVE1.bin","rb")))
                     printf("ERRO AO LER ARQUIVO");
 
-                fread(&matmapa, sizeof(matmapa), 1 , save1);
+                fread(&n, sizeof(int), 1, save1);
+
+                for (int i = 0; i < ALTURA_MAPA; ++i) {
+                    fread(mapa[i], sizeof(int), LARGURA_MAPA, save1);
+                }
 
                 fread(&Jogador, sizeof(JOGADOR), 1, save1);
 
-                fread(&Inimigo, sizeof(INIMIGO), 5, save1);
+                fread(&Inimigo, sizeof(INIMIGO), n, save1);
 
-                carregaMapa(matmapa);
+                fread(&n2, sizeof(int), 1, save1);
 
                 fclose(save1);
 
@@ -803,17 +826,21 @@ int main(void)
                 if(!(save2 = fopen("TOWDEFSAVE2.bin","rb")))
                     printf("ERRO AO LER ARQUIVO");
 
-                fread(&matmapa, sizeof(matmapa), 1 , save2);
+                fread(&n, sizeof(int), 1, save2);
+
+                for (int i = 0; i < ALTURA_MAPA; ++i) {
+                    fread(mapa[i], sizeof(int), LARGURA_MAPA, save2);
+                }
 
                 fread(&Jogador, sizeof(JOGADOR), 1, save2);
 
-                fread(&Inimigo, sizeof(INIMIGO), 5, save2);
+                fread(&Inimigo, sizeof(INIMIGO), n, save2);
 
-                carregaMapa(matmapa);
+                fread(&n2, sizeof(int), 1, save2);
 
                 fclose(save2);
 
-                currentScreen = JOGO;//transfere para a tela de gameplay
+                currentScreen = JOGO;
 
 
             }
@@ -829,17 +856,21 @@ int main(void)
                 if(!(save3 = fopen("TOWDEFSAVE3.bin","rb")))
                     printf("ERRO AO LER ARQUIVO");
 
-                fread(&matmapa, sizeof(matmapa), 1 , save3);
+                fread(&n, sizeof(int), 1, save3);
+
+                for (int i = 0; i < ALTURA_MAPA; ++i) {
+                    fread(mapa[i], sizeof(int), LARGURA_MAPA, save3);
+                }
 
                 fread(&Jogador, sizeof(JOGADOR), 1, save3);
 
-                fread(&Inimigo, sizeof(INIMIGO), 5, save3);
+                fread(&Inimigo, sizeof(INIMIGO), n, save3);
 
-                carregaMapa(matmapa);
+                fread(&n2, sizeof(int), 1, save3);
 
                 fclose(save3);
 
-                currentScreen = JOGO;//transfere para a tela de gameplay
+                currentScreen = JOGO;
             }
 
             if(botaopress(botaoSAVE4)) botaoSAVE4.cor = WHITE;
@@ -853,17 +884,21 @@ int main(void)
                 if(!(save4 = fopen("TOWDEFSAVE4.bin","rb")))
                     printf("ERRO AO LER ARQUIVO");
 
-                fread(&matmapa, sizeof(matmapa), 1 , save4);
+               fread(&n, sizeof(int), 1, save4);
+
+                for (int i = 0; i < ALTURA_MAPA; ++i) {
+                    fread(mapa[i], sizeof(int), LARGURA_MAPA, save4);
+                }
 
                 fread(&Jogador, sizeof(JOGADOR), 1, save4);
 
-                fread(&Inimigo, sizeof(INIMIGO), 5, save4);
+                fread(&Inimigo, sizeof(INIMIGO), n, save4);
 
-                carregaMapa(matmapa);
+                fread(&n2, sizeof(int), 1, save4);
 
                 fclose(save4);
 
-                currentScreen = JOGO;//transfere para a tela de gameplay
+                currentScreen = JOGO;
             }
         }
         break;
