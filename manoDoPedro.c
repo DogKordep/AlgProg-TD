@@ -31,7 +31,7 @@ typedef struct Inimigo
     float x,y;
     int dx, dy;
     int vida;
-}INIMIGO;
+} INIMIGO;
 
 typedef struct pos_J
 {
@@ -80,35 +80,35 @@ void DesenhaMapa(Texture2D parede,Texture2D portal,Texture2D bomba,Texture2D rec
             if (mapa[i][j] == 'W')
             {
                 //DrawRectangle(j * LARGURA_BLOCO, i * ALTURA_BLOCO, LARGURA_BLOCO, ALTURA_BLOCO, GRAY);
-                DrawTexture(parede, j * LARGURA_BLOCO, i * ALTURA_BLOCO , WHITE);
+                DrawTexture(parede, j * LARGURA_BLOCO, i * ALTURA_BLOCO, WHITE);
             }
             if (mapa[i][j] == 'R')
             {
-                DrawTexture(recurso, j * LARGURA_BLOCO, i * ALTURA_BLOCO , WHITE);
+                DrawTexture(recurso, j * LARGURA_BLOCO, i * ALTURA_BLOCO, WHITE);
                 //DrawRectangle(j * LARGURA_BLOCO, i * ALTURA_BLOCO, LARGURA_BLOCO, ALTURA_BLOCO, GREEN);
             }
             if (mapa[i][j] == 'H')
             {
-                DrawTexture(portal, j * LARGURA_BLOCO, i * ALTURA_BLOCO , WHITE);
+                DrawTexture(portal, j * LARGURA_BLOCO, i * ALTURA_BLOCO, WHITE);
                 //DrawRectangle(j * LARGURA_BLOCO, i * ALTURA_BLOCO, LARGURA_BLOCO, ALTURA_BLOCO, BLACK);
             }
             if (mapa[i][j] == 'S')
             {
-                 DrawTexture(base, j * LARGURA_BLOCO, i * ALTURA_BLOCO , WHITE);
+                DrawTexture(base, j * LARGURA_BLOCO, i * ALTURA_BLOCO, WHITE);
                 //DrawRectangle(j * LARGURA_BLOCO, i * ALTURA_BLOCO, LARGURA_BLOCO, ALTURA_BLOCO, SKYBLUE);
             }
-             if (mapa[i][j] == 'O')
-             {
-                 DrawTexture(bomba, j * LARGURA_BLOCO, i * ALTURA_BLOCO , WHITE);
-                 //DrawRectangle(j * LARGURA_BLOCO, i * ALTURA_BLOCO, LARGURA_BLOCO, ALTURA_BLOCO, BROWN);
-             }
+            if (mapa[i][j] == 'O')
+            {
+                DrawTexture(bomba, j * LARGURA_BLOCO, i * ALTURA_BLOCO, WHITE);
+                //DrawRectangle(j * LARGURA_BLOCO, i * ALTURA_BLOCO, LARGURA_BLOCO, ALTURA_BLOCO, BROWN);
+            }
             if (mapa[i][j] == 'D')
             {
                 DrawRectangle(j * LARGURA_BLOCO, i * ALTURA_BLOCO, LARGURA_BLOCO, ALTURA_BLOCO, BROWN);
             }
             if (mapa[i][j] == ' ' || mapa[i][j] == 'M' || mapa[i][j] == 'J')
             {
-                DrawTexture(grama, j * LARGURA_BLOCO, i * ALTURA_BLOCO , WHITE);
+                DrawTexture(grama, j * LARGURA_BLOCO, i * ALTURA_BLOCO, WHITE);
                 //DrawRectangle(j * LARGURA_BLOCO, i * ALTURA_BLOCO, LARGURA_BLOCO, ALTURA_BLOCO, BROWN);
             }
         }
@@ -233,10 +233,10 @@ void MovimentoJogador(JOGADOR *Jogador)
     }
 
     if(mapa[(int)(Jogador->y)/ALTURA_BLOCO][(int)(Jogador->x)/LARGURA_BLOCO] == 'R')
-        {
-            Jogador->recurso++;
-            mapa[(int)(Jogador->y)/ALTURA_BLOCO][(int)(Jogador->x)/LARGURA_BLOCO] = ' ';
-        }
+    {
+        Jogador->recurso++;
+        mapa[(int)(Jogador->y)/ALTURA_BLOCO][(int)(Jogador->x)/LARGURA_BLOCO] = ' ';
+    }
     Jogador->dx = 0;
     Jogador->dy = 0;
 }
@@ -275,7 +275,8 @@ void MovimentoInimigo(INIMIGO *Inimigo, int TAM, double tempo, int *n2)
             Inimigo->x += Inimigo->dx * 20;
             printf("Inimigo.dx = %d\n", Inimigo->dx);
 
-            if(mapa[(int)(Inimigo->y)/ALTURA_BLOCO][(int)(Inimigo->x)/LARGURA_BLOCO] == 'O' && Inimigo->vida == 1){
+            if(mapa[(int)(Inimigo->y)/ALTURA_BLOCO][(int)(Inimigo->x)/LARGURA_BLOCO] == 'O' && Inimigo->vida == 1)
+            {
                 Inimigo->vida--;
                 *n2=*n2+1;
                 mapa[(int)(Inimigo->y)/ALTURA_BLOCO][(int)(Inimigo->x)/LARGURA_BLOCO] = ' ';
@@ -291,7 +292,7 @@ void DesenhaInimigo(INIMIGO *Inimigo, int TAM,Texture2D inimigo)
     for(int i = 0; i < TAM; i++)
     {
         if(Inimigo->vida==1)
-        DrawTexture(inimigo, Inimigo->x, Inimigo->y , WHITE);
+            DrawTexture(inimigo, Inimigo->x, Inimigo->y, WHITE);
         //DrawRectangle(Inimigo->x, Inimigo->y, LARGURA_BLOCO, ALTURA_BLOCO, RED);
         Inimigo++;
     }
@@ -341,6 +342,50 @@ void VidaBase(INIMIGO *Inimigo, int TAM, int *n2)
     char textoVidasBase[20];
     sprintf(textoVidasBase, "Vidas da base: %d", vidaBase);
     DrawText(textoVidasBase, 100, 200, 50, ORANGE);
+}
+
+void SalvaJogo(char save[], int n, JOGADOR *Jogador, INIMIGO *Inimigo, int n2)//, char mapa[][LARGURA_MAPA], , , , )
+{
+    FILE *arquivo;
+
+    if(!(arquivo = fopen(save,"wb")))
+        printf("ERRO NA ABERTURA DO SAVE");
+
+    fwrite(&n, sizeof(int), 1, arquivo);
+
+    for (int i = 0; i < ALTURA_MAPA; ++i)
+        fwrite(mapa[i], sizeof(int), LARGURA_MAPA, arquivo);
+
+    fwrite(Jogador, sizeof(JOGADOR), 1, arquivo);
+
+    fwrite(Inimigo, sizeof(INIMIGO), n, arquivo);
+
+    fwrite(&n2, sizeof(int), 1, arquivo);
+
+    fclose(arquivo);
+}
+
+void CarregaJogo(char save[], int *n, JOGADOR *Jogador, INIMIGO *Inimigo, int *n2)
+{
+    FILE *arquivo;
+
+    if(!(arquivo = fopen(save,"rb")))
+        printf("ERRO AO LER ARQUIVO");
+
+    fread(n, sizeof(int), 1, arquivo);
+
+    for (int i = 0; i < ALTURA_MAPA; ++i)
+    {
+        fread(mapa[i], sizeof(int), LARGURA_MAPA, arquivo);
+    }
+
+    fread(Jogador, sizeof(JOGADOR), 1, arquivo);
+
+    fread(Inimigo, sizeof(INIMIGO), n, arquivo);
+
+    fread(n2, sizeof(int), 1, arquivo);
+
+    fclose(arquivo);
 }
 
 int main(void)
@@ -490,7 +535,7 @@ int main(void)
             {
                 //Carregar jogo salvo
                 currentScreen = CARREGA;//transfere para a tela de selecionar save
-                }
+            }
 
             if(botaopress(botaoSAIR)) botaoSAIR.cor = WHITE;  //botão sair do jogo
             else botaoSAIR.cor = YELLOW;
@@ -650,24 +695,7 @@ int main(void)
             {
                 //salva no slot 1
 
-                    FILE *save1;
-
-                if(!(save1 = fopen("Saves/TOWDEFSAVE1.bin","wb")))
-                   printf("ERRO NA ABERTURA DO SAVE");
-
-                fwrite(&n, sizeof(int), 1, save1);
-
-                for (int i = 0; i < ALTURA_MAPA; ++i) {
-                    fwrite(mapa[i], sizeof(int), LARGURA_MAPA, save1);
-                }
-
-                fwrite(&Jogador, sizeof(JOGADOR), 1, save1);
-
-                fwrite(&Inimigo, sizeof(INIMIGO), n, save1);
-
-                fwrite(&n2, sizeof(int), 1, save1);
-
-                fclose(save1);
+                SalvaJogo("Saves/TOWDEFSAVE1.bin", n, &Jogador, Inimigo, n2);
 
                 currentScreen = PAUSE;
             }
@@ -679,24 +707,7 @@ int main(void)
             {
                 //salva no slot 2
 
-                FILE *save2;
-
-                if(!(save2 = fopen("Saves/TOWDEFSAVE2.bin","wb")))
-                   printf("ERRO NA ABERTURA DO SAVE");
-
-                fwrite(&n, sizeof(int), 1, save2);
-
-                for (int i = 0; i < ALTURA_MAPA; ++i) {
-                    fwrite(mapa[i], sizeof(int), LARGURA_MAPA, save2);
-                }
-
-                fwrite(&Jogador, sizeof(JOGADOR), 1, save2);
-
-                fwrite(&Inimigo, sizeof(INIMIGO), n, save2);
-
-                fwrite(&n2, sizeof(int), 1, save2);
-
-                fclose(save2);
+                SalvaJogo("Saves/TOWDEFSAVE2.bin", n, &Jogador, Inimigo, n2);
 
                 currentScreen = PAUSE;
             }
@@ -707,24 +718,8 @@ int main(void)
             if(botaopress(botaoSAVE3) && IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
             {
                 //salva no slot 3
-              FILE *save3;
 
-                if(!(save3  = fopen("Saves/TOWDEFSAVE3.bin","wb")))
-                   printf("ERRO NA ABERTURA DO SAVE");
-
-                fwrite(&n, sizeof(int), 1, save3);
-
-                for (int i = 0; i < ALTURA_MAPA; ++i) {
-                    fwrite(mapa[i], sizeof(int), LARGURA_MAPA, save3);
-                }
-
-                fwrite(&Jogador, sizeof(JOGADOR), 1, save3);
-
-                fwrite(&Inimigo, sizeof(INIMIGO), n, save3);
-
-                fwrite(&n2, sizeof(int), 1, save3);
-
-                fclose(save3);
+                SalvaJogo("Saves/TOWDEFSAVE3.bin", n, &Jogador, Inimigo, n2);
 
                 currentScreen = PAUSE;
             }
@@ -734,25 +729,9 @@ int main(void)
 
             if(botaopress(botaoSAVE4) && IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
             {
-                //salva no slot 4
-              FILE *save4;
+                //Salva no slot 4
 
-                if(!(save4  = fopen("Saves/TOWDEFSAVE4.bin","wb")))
-                   printf("ERRO NA ABERTURA DO SAVE");
-
-                fwrite(&n, sizeof(int), 1, save4);
-
-                for (int i = 0; i < ALTURA_MAPA; ++i) {
-                    fwrite(mapa[i], sizeof(int), LARGURA_MAPA, save4);
-                }
-
-                fwrite(&Jogador, sizeof(JOGADOR), 1, save4);
-
-                fwrite(&Inimigo, sizeof(INIMIGO), n, save4);
-
-                fwrite(&n2, sizeof(int), 1, save4);
-
-                fclose(save4);
+                SalvaJogo("Saves/TOWDEFSAVE4.bin", n, &Jogador, Inimigo, n2);
 
                 currentScreen = PAUSE;
             }
@@ -791,14 +770,15 @@ int main(void)
             {
                 //carrega no slot 1
 
-                FILE *save1;
+                /*FILE *save1;
 
                 if(!(save1 = fopen("Saves/TOWDEFSAVE1.bin","rb")))
                     printf("ERRO AO LER ARQUIVO");
 
                 fread(&n, sizeof(int), 1, save1);
 
-                for (int i = 0; i < ALTURA_MAPA; ++i) {
+                for (int i = 0; i < ALTURA_MAPA; ++i)
+                {
                     fread(mapa[i], sizeof(int), LARGURA_MAPA, save1);
                 }
 
@@ -808,7 +788,9 @@ int main(void)
 
                 fread(&n2, sizeof(int), 1, save1);
 
-                fclose(save1);
+                fclose(save1);*/
+
+                CarregaJogo("Saves/TOWDEFSAVE1.bin", &n, &Jogador, Inimigo, &n2);
 
                 currentScreen = JOGO;//transfere para a tela de gameplay
 
@@ -821,14 +803,15 @@ int main(void)
             {
                 //salva no slot 2
 
-                FILE *save2;
+                /*FILE *save2;
 
                 if(!(save2 = fopen("Saves/TOWDEFSAVE2.bin","rb")))
                     printf("ERRO AO LER ARQUIVO");
 
                 fread(&n, sizeof(int), 1, save2);
 
-                for (int i = 0; i < ALTURA_MAPA; ++i) {
+                for (int i = 0; i < ALTURA_MAPA; ++i)
+                {
                     fread(mapa[i], sizeof(int), LARGURA_MAPA, save2);
                 }
 
@@ -838,7 +821,9 @@ int main(void)
 
                 fread(&n2, sizeof(int), 1, save2);
 
-                fclose(save2);
+                fclose(save2);*/
+
+                CarregaJogo("Saves/TOWDEFSAVE2.bin", &n, &Jogador, Inimigo, &n2);
 
                 currentScreen = JOGO;
 
@@ -851,14 +836,15 @@ int main(void)
             if(botaopress(botaoSAVE3) && IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
             {
                 //salva no slot 3
-                FILE *save3;
+                /*FILE *save3;
 
                 if(!(save3 = fopen("Saves/TOWDEFSAVE3.bin","rb")))
                     printf("ERRO AO LER ARQUIVO");
 
                 fread(&n, sizeof(int), 1, save3);
 
-                for (int i = 0; i < ALTURA_MAPA; ++i) {
+                for (int i = 0; i < ALTURA_MAPA; ++i)
+                {
                     fread(mapa[i], sizeof(int), LARGURA_MAPA, save3);
                 }
 
@@ -868,7 +854,9 @@ int main(void)
 
                 fread(&n2, sizeof(int), 1, save3);
 
-                fclose(save3);
+                fclose(save3);*/
+
+                CarregaJogo("Saves/TOWDEFSAVE3.bin", &n, &Jogador, Inimigo, &n2);
 
                 currentScreen = JOGO;
             }
@@ -879,14 +867,15 @@ int main(void)
             if(botaopress(botaoSAVE4) && IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
             {
                 //salva no slot 4
-                FILE *save4;
+                /*FILE *save4;
 
                 if(!(save4 = fopen("Saves/TOWDEFSAVE4.bin","rb")))
                     printf("ERRO AO LER ARQUIVO");
 
-               fread(&n, sizeof(int), 1, save4);
+                fread(&n, sizeof(int), 1, save4);
 
-                for (int i = 0; i < ALTURA_MAPA; ++i) {
+                for (int i = 0; i < ALTURA_MAPA; ++i)
+                {
                     fread(mapa[i], sizeof(int), LARGURA_MAPA, save4);
                 }
 
@@ -896,7 +885,9 @@ int main(void)
 
                 fread(&n2, sizeof(int), 1, save4);
 
-                fclose(save4);
+                fclose(save4);*/
+
+                CarregaJogo("Saves/TOWDEFSAVE4.bin", &n, &Jogador, Inimigo, &n2);
 
                 currentScreen = JOGO;
             }
@@ -944,7 +935,7 @@ int main(void)
 
             DesenhaInimigo(Inimigo, 5, inimigo);
 
-            DrawTexture(heroi, Jogador.x, Jogador.y , WHITE);
+            DrawTexture(heroi, Jogador.x, Jogador.y, WHITE);
             //DrawRectangle(Jogador.x, Jogador.y, LARGURA_BLOCO, ALTURA_BLOCO, DARKBLUE);
 
             MovimentoJogador(&Jogador);
@@ -953,25 +944,27 @@ int main(void)
 
             VidaJogador(&Jogador, Inimigo, 5);
 
-                if(Jogador.vida <= 0)
-                {
-                    currentScreen = GAMEOVER;
-                    Jogador.vida++;
-                }
-                VidaBase(Inimigo, 5,&n2);
-                if(vidaBase <= 0)
-                {
-                    currentScreen = GAMEOVER;
-                    vidaBase = 3;
-                }
+            if(Jogador.vida <= 0)
+            {
+                currentScreen = GAMEOVER;
+                Jogador.vida++;
+            }
+            VidaBase(Inimigo, 5,&n2);
+            if(vidaBase <= 0)
+            {
+                currentScreen = GAMEOVER;
+                vidaBase = 3;
+            }
 
-                if(IsKeyPressed(KEY_G) && Jogador.recurso>0){
-                    Jogador.recurso--;
-                    mapa[(int)(Jogador.y)/ALTURA_BLOCO][(int)(Jogador.x)/LARGURA_BLOCO] = 'O';
-                }
-                if(n==n2){
-                    currentScreen = FASE_GANHA;
-                }
+            if(IsKeyPressed(KEY_G) && Jogador.recurso>0)
+            {
+                Jogador.recurso--;
+                mapa[(int)(Jogador.y)/ALTURA_BLOCO][(int)(Jogador.x)/LARGURA_BLOCO] = 'O';
+            }
+            if(n==n2)
+            {
+                currentScreen = FASE_GANHA;
+            }
 
         }
         break;
