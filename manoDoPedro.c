@@ -344,7 +344,7 @@ void VidaBase(INIMIGO *Inimigo, int TAM, int *n2)
     DrawText(textoVidasBase, 100, 200, 50, ORANGE);
 }
 
-void SalvaJogo(char save[], int n, JOGADOR *Jogador, INIMIGO *Inimigo, int n2)//, char mapa[][LARGURA_MAPA], , , , )
+void SalvaJogo(char save[], int n, JOGADOR *Jogador, INIMIGO *Inimigo, int n2, int fases)//, char mapa[][LARGURA_MAPA], , , , )
 {
     FILE *arquivo;
 
@@ -362,10 +362,12 @@ void SalvaJogo(char save[], int n, JOGADOR *Jogador, INIMIGO *Inimigo, int n2)//
 
     fwrite(&n2, sizeof(int), 1, arquivo);
 
+    fwrite(&fases, sizeof(int), 1, arquivo);
+
     fclose(arquivo);
 }
 
-void CarregaJogo(char save[], int *n, JOGADOR *Jogador, INIMIGO *Inimigo, int *n2)
+void CarregaJogo(char save[], int *n, JOGADOR *Jogador, INIMIGO *Inimigo, int *n2, int *fases)
 {
     FILE *arquivo;
 
@@ -384,6 +386,8 @@ void CarregaJogo(char save[], int *n, JOGADOR *Jogador, INIMIGO *Inimigo, int *n
     fread(Inimigo, sizeof(INIMIGO), n, arquivo);
 
     fread(n2, sizeof(int), 1, arquivo);
+
+    fread(fases, sizeof(int), 1, arquivo);
 
     fclose(arquivo);
 }
@@ -404,7 +408,7 @@ int main(void)
     double tempo = 0;
     GameScreen currentScreen = LOGO;
     int framesCounter = 0;
-    int n=0,n2=0;
+    int n=0, n2 = 0 , Fases_Ganhas = 0;
     char matmapa[10];
 
 //----------------setando FPS e tamanhho da janela do jogo-------------------//
@@ -576,7 +580,7 @@ int main(void)
             if(botaopress(botaoFASE2)) botaoFASE2.cor = WHITE;
             else botaoFASE2.cor = YELLOW;
 
-            if(botaopress(botaoFASE2) && IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
+            if(botaopress(botaoFASE2) && IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && Fases_Ganhas > 0)
             {
                 strcpy(matmapa, "Mapas/mapa2.txt");
                 carregaMapa(matmapa);
@@ -589,9 +593,10 @@ int main(void)
             if(botaopress(botaoFASE3)) botaoFASE3.cor = WHITE;
             else botaoFASE3.cor = YELLOW;
 
-            if(botaopress(botaoFASE3) && IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
+            if(botaopress(botaoFASE3) && IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && Fases_Ganhas > 1)
             {
-                carregaMapa("Mapas/mapa3.txt");
+                strcpy(matmapa, "Mapas/mapa3.txt");
+                carregaMapa(matmapa);
                 InitPosicaoJogador(&Jogador);
                 InitPosicaoInimigo(Inimigo);
                 n = InitPosicaoInimigo(Inimigo);
@@ -601,14 +606,16 @@ int main(void)
             if(botaopress(botaoFASE4)) botaoFASE4.cor = WHITE;
             else botaoFASE4.cor = YELLOW;
 
-            if(botaopress(botaoFASE4) && IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
+            if(botaopress(botaoFASE4) && IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && Fases_Ganhas > 2)
             {
-                carregaMapa("Mapas/mapa4.txt");
+                strcpy(matmapa, "Mapas/mapa4.txt");
+                carregaMapa(matmapa);
                 InitPosicaoJogador(&Jogador);
                 InitPosicaoInimigo(Inimigo);
                 n = InitPosicaoInimigo(Inimigo);
                 currentScreen = JOGO;
             }
+            printf("%d  %d\n", n, n2);
         }
         break;
         case PAUSE:
@@ -656,13 +663,11 @@ int main(void)
             if(botaopress(botaoSAIR2)) botaoSAIR2.cor = WHITE;
             else botaoSAIR2.cor = YELLOW;
 
+//capeta
             if(botaopress(botaoSAIR2) && IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
             {
                 CloseWindow();
             }
-
-            // Press enter to change to ENDING screen
-
         }
         break;
         case GAMEOVER:
@@ -695,7 +700,7 @@ int main(void)
             {
                 //salva no slot 1
 
-                SalvaJogo("Saves/TOWDEFSAVE1.bin", n, &Jogador, Inimigo, n2);
+                SalvaJogo("Saves/TOWDEFSAVE1.bin", n, &Jogador, Inimigo, n2, Fases_Ganhas);
 
                 currentScreen = PAUSE;
             }
@@ -707,7 +712,7 @@ int main(void)
             {
                 //salva no slot 2
 
-                SalvaJogo("Saves/TOWDEFSAVE2.bin", n, &Jogador, Inimigo, n2);
+                SalvaJogo("Saves/TOWDEFSAVE2.bin", n, &Jogador, Inimigo, n2, Fases_Ganhas);
 
                 currentScreen = PAUSE;
             }
@@ -719,7 +724,7 @@ int main(void)
             {
                 //salva no slot 3
 
-                SalvaJogo("Saves/TOWDEFSAVE3.bin", n, &Jogador, Inimigo, n2);
+                SalvaJogo("Saves/TOWDEFSAVE3.bin", n, &Jogador, Inimigo, n2, Fases_Ganhas);
 
                 currentScreen = PAUSE;
             }
@@ -731,7 +736,7 @@ int main(void)
             {
                 //Salva no slot 4
 
-                SalvaJogo("Saves/TOWDEFSAVE4.bin", n, &Jogador, Inimigo, n2);
+                SalvaJogo("Saves/TOWDEFSAVE4.bin", n, &Jogador, Inimigo, n2, Fases_Ganhas);
 
                 currentScreen = PAUSE;
             }
@@ -768,32 +773,11 @@ int main(void)
 
             if(botaopress(botaoSAVE1) && IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
             {
-                //carrega no slot 1
+                //carrega o slot 1
 
-                /*FILE *save1;
-
-                if(!(save1 = fopen("Saves/TOWDEFSAVE1.bin","rb")))
-                    printf("ERRO AO LER ARQUIVO");
-
-                fread(&n, sizeof(int), 1, save1);
-
-                for (int i = 0; i < ALTURA_MAPA; ++i)
-                {
-                    fread(mapa[i], sizeof(int), LARGURA_MAPA, save1);
-                }
-
-                fread(&Jogador, sizeof(JOGADOR), 1, save1);
-
-                fread(&Inimigo, sizeof(INIMIGO), n, save1);
-
-                fread(&n2, sizeof(int), 1, save1);
-
-                fclose(save1);*/
-
-                CarregaJogo("Saves/TOWDEFSAVE1.bin", &n, &Jogador, Inimigo, &n2);
+                CarregaJogo("Saves/TOWDEFSAVE1.bin", &n, &Jogador, Inimigo, &n2, &Fases_Ganhas);
 
                 currentScreen = JOGO;//transfere para a tela de gameplay
-
             }
 
             if(botaopress(botaoSAVE2)) botaoSAVE2.cor = WHITE;
@@ -801,33 +785,11 @@ int main(void)
 
             if(botaopress(botaoSAVE2) && IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
             {
-                //salva no slot 2
+                //salva o slot
 
-                /*FILE *save2;
-
-                if(!(save2 = fopen("Saves/TOWDEFSAVE2.bin","rb")))
-                    printf("ERRO AO LER ARQUIVO");
-
-                fread(&n, sizeof(int), 1, save2);
-
-                for (int i = 0; i < ALTURA_MAPA; ++i)
-                {
-                    fread(mapa[i], sizeof(int), LARGURA_MAPA, save2);
-                }
-
-                fread(&Jogador, sizeof(JOGADOR), 1, save2);
-
-                fread(&Inimigo, sizeof(INIMIGO), n, save2);
-
-                fread(&n2, sizeof(int), 1, save2);
-
-                fclose(save2);*/
-
-                CarregaJogo("Saves/TOWDEFSAVE2.bin", &n, &Jogador, Inimigo, &n2);
+                CarregaJogo("Saves/TOWDEFSAVE2.bin", &n, &Jogador, Inimigo, &n2, &Fases_Ganhas);
 
                 currentScreen = JOGO;
-
-
             }
 
             if(botaopress(botaoSAVE3)) botaoSAVE3.cor = WHITE;
@@ -836,27 +798,8 @@ int main(void)
             if(botaopress(botaoSAVE3) && IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
             {
                 //salva no slot 3
-                /*FILE *save3;
 
-                if(!(save3 = fopen("Saves/TOWDEFSAVE3.bin","rb")))
-                    printf("ERRO AO LER ARQUIVO");
-
-                fread(&n, sizeof(int), 1, save3);
-
-                for (int i = 0; i < ALTURA_MAPA; ++i)
-                {
-                    fread(mapa[i], sizeof(int), LARGURA_MAPA, save3);
-                }
-
-                fread(&Jogador, sizeof(JOGADOR), 1, save3);
-
-                fread(&Inimigo, sizeof(INIMIGO), n, save3);
-
-                fread(&n2, sizeof(int), 1, save3);
-
-                fclose(save3);*/
-
-                CarregaJogo("Saves/TOWDEFSAVE3.bin", &n, &Jogador, Inimigo, &n2);
+                CarregaJogo("Saves/TOWDEFSAVE3.bin", &n, &Jogador, Inimigo, &n2, &Fases_Ganhas);
 
                 currentScreen = JOGO;
             }
@@ -867,27 +810,8 @@ int main(void)
             if(botaopress(botaoSAVE4) && IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
             {
                 //salva no slot 4
-                /*FILE *save4;
 
-                if(!(save4 = fopen("Saves/TOWDEFSAVE4.bin","rb")))
-                    printf("ERRO AO LER ARQUIVO");
-
-                fread(&n, sizeof(int), 1, save4);
-
-                for (int i = 0; i < ALTURA_MAPA; ++i)
-                {
-                    fread(mapa[i], sizeof(int), LARGURA_MAPA, save4);
-                }
-
-                fread(&Jogador, sizeof(JOGADOR), 1, save4);
-
-                fread(&Inimigo, sizeof(INIMIGO), n, save4);
-
-                fread(&n2, sizeof(int), 1, save4);
-
-                fclose(save4);*/
-
-                CarregaJogo("Saves/TOWDEFSAVE4.bin", &n, &Jogador, Inimigo, &n2);
+                CarregaJogo("Saves/TOWDEFSAVE4.bin", &n, &Jogador, Inimigo, &n2, &Fases_Ganhas);
 
                 currentScreen = JOGO;
             }
@@ -906,23 +830,18 @@ int main(void)
             // TODO: Draw LOGO screen here!
             ClearBackground(DARKBLUE);
             DrawText("MEIA BOCA JUNIORS", 280, 250, 60, YELLOW);
-            //     DrawText("WAIT for 2 SECONDS...", 290, 220, 20, YELLOW);
-
         }
         break;
         case TITULO:
         {
             // TODO: Draw TITLE screen here!
             DrawRectangle(0, 0, LARGURA_MAPA * LARGURA_BLOCO, ALTURA_MAPA * ALTURA_BLOCO, DARKBLUE);
-            //DrawText("TITLE SCREEN", 20, 20, 40, DARKGREEN);
-            //DrawText("PRESS ENTER or TAP to JUMP to GAMEPLAY SCREEN", 120, 220, 20, DARKGREEN);
             DrawRectangleRec(botaoNOVOJ.rect, botaoNOVOJ.cor);
             DrawText("NOVO JOGO", botaoNOVOJ.rect.x + botaoNOVOJ.rect.width/2 - MeasureText("NOVO JOGO",20)/2, botaoNOVOJ.rect.y + botaoNOVOJ.rect.height/2 - 20/2,20, BLACK);
             DrawRectangleRec(botaoCARREGAR.rect, botaoCARREGAR.cor);
             DrawText("CARREGAR JOGO", botaoCARREGAR.rect.x + botaoCARREGAR.rect.width/2 - MeasureText("CARREGAR JOGO",20)/2, botaoCARREGAR.rect.y + botaoCARREGAR.rect.height/2 - 20/2,20, BLACK);
             DrawRectangleRec(botaoSAIR.rect, botaoSAIR.cor);
             DrawText("SAIR", botaoSAIR.rect.x + botaoSAIR.rect.width/2 - MeasureText("SAIR",20)/2, botaoSAIR.rect.y + botaoSAIR.rect.height/2 - 20/2,20, BLACK);
-
         }
         break;
         case JOGO:
@@ -930,13 +849,12 @@ int main(void)
             // TODO: Draw GAMEPLAY screen here!
 
             ClearBackground(LIGHTGRAY);
-            DesenhaMapa(parede,portal,bomba,recurso,base,grama);
 
+            DesenhaMapa(parede,portal,bomba,recurso,base,grama);
 
             DesenhaInimigo(Inimigo, 5, inimigo);
 
             DrawTexture(heroi, Jogador.x, Jogador.y, WHITE);
-            //DrawRectangle(Jogador.x, Jogador.y, LARGURA_BLOCO, ALTURA_BLOCO, DARKBLUE);
 
             MovimentoJogador(&Jogador);
 
@@ -949,22 +867,26 @@ int main(void)
                 currentScreen = GAMEOVER;
                 Jogador.vida++;
             }
-            VidaBase(Inimigo, 5,&n2);
+
+            VidaBase(Inimigo, 5, &n2);
+
             if(vidaBase <= 0)
             {
                 currentScreen = GAMEOVER;
                 vidaBase = 3;
             }
 
-            if(IsKeyPressed(KEY_G) && Jogador.recurso>0)
+            if(IsKeyPressed(KEY_G) && Jogador.recurso > 0)
             {
                 Jogador.recurso--;
                 mapa[(int)(Jogador.y)/ALTURA_BLOCO][(int)(Jogador.x)/LARGURA_BLOCO] = 'O';
             }
-            if(n==n2)
-            {
+
+            if(n == n2){
+                Fases_Ganhas++;
                 currentScreen = FASE_GANHA;
             }
+            printf("%d  %d\n", n, n2);
 
         }
         break;
@@ -1006,7 +928,6 @@ int main(void)
             DrawText("VOLTAR", botaoVOLTAR.rect.x + botaoVOLTAR.rect.width/2 - MeasureText("VOLTAR",20)/2, botaoVOLTAR.rect.y + botaoVOLTAR.rect.height/2 - 20/2,20, BLACK);
             DrawRectangleRec(botaoSAIR2.rect, botaoSAIR2.cor);
             DrawText("SAIR E SALVAR NO SLOT 1", botaoSAIR2.rect.x + botaoSAIR2.rect.width/2 - MeasureText("SAIR E SALVAR no SLOT 1",20)/2, botaoSAIR2.rect.y + botaoSAIR2.rect.height/2 - 20/2,20, BLACK);
-
         }
         break;
         case SALVA:
@@ -1020,7 +941,6 @@ int main(void)
             DrawText("SLOT 3", botaoSAVE3.rect.x + botaoSAVE3.rect.width/2 - MeasureText("SLOT 3",20)/2, botaoSAVE3.rect.y + botaoSAVE3.rect.height/2 - 20/2,20, BLACK);
             DrawRectangleRec(botaoSAVE4.rect, botaoSAVE4.cor);
             DrawText("SLOT 4", botaoSAVE4.rect.x + botaoSAVE4.rect.width/2 - MeasureText("SLOT 4",20)/2, botaoSAVE4.rect.y + botaoSAVE4.rect.height/2 - 20/2,20, BLACK);
-
         }
         break;
         case FASE_GANHA:
@@ -1052,7 +972,6 @@ int main(void)
             DrawText("SLOT 3", botaoSAVE3.rect.x + botaoSAVE3.rect.width/2 - MeasureText("SLOT 3",20)/2, botaoSAVE3.rect.y + botaoSAVE3.rect.height/2 - 20/2,20, BLACK);
             DrawRectangleRec(botaoSAVE4.rect, botaoSAVE4.cor);
             DrawText("SLOT 4", botaoSAVE4.rect.x + botaoSAVE4.rect.width/2 - MeasureText("SLOT 4",20)/2, botaoSAVE4.rect.y + botaoSAVE4.rect.height/2 - 20/2,20, BLACK);
-
         }
         break;
         default:
