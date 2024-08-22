@@ -82,28 +82,23 @@ void DesenhaMapa(Texture2D parede,Texture2D portal,Texture2D bomba,Texture2D rec
         {
             if (mapa[i][j] == 'W')
             {
-                //DrawRectangle(j * LARGURA_BLOCO, i * ALTURA_BLOCO, LARGURA_BLOCO, ALTURA_BLOCO, GRAY);
                 DrawTexture(parede, j * LARGURA_BLOCO, i * ALTURA_BLOCO, WHITE);
             }
             if (mapa[i][j] == 'R')
             {
                 DrawTexture(recurso, j * LARGURA_BLOCO, i * ALTURA_BLOCO, WHITE);
-                //DrawRectangle(j * LARGURA_BLOCO, i * ALTURA_BLOCO, LARGURA_BLOCO, ALTURA_BLOCO, GREEN);
             }
             if (mapa[i][j] == 'H')
             {
                 DrawTexture(portal, j * LARGURA_BLOCO, i * ALTURA_BLOCO, WHITE);
-                //DrawRectangle(j * LARGURA_BLOCO, i * ALTURA_BLOCO, LARGURA_BLOCO, ALTURA_BLOCO, BLACK);
             }
             if (mapa[i][j] == 'S')
             {
                 DrawTexture(base, j * LARGURA_BLOCO, i * ALTURA_BLOCO, WHITE);
-                //DrawRectangle(j * LARGURA_BLOCO, i * ALTURA_BLOCO, LARGURA_BLOCO, ALTURA_BLOCO, SKYBLUE);
             }
             if (mapa[i][j] == 'O')
             {
                 DrawTexture(bomba, j * LARGURA_BLOCO, i * ALTURA_BLOCO, WHITE);
-                //DrawRectangle(j * LARGURA_BLOCO, i * ALTURA_BLOCO, LARGURA_BLOCO, ALTURA_BLOCO, BROWN);
             }
             if (mapa[i][j] == 'D')
             {
@@ -116,7 +111,6 @@ void DesenhaMapa(Texture2D parede,Texture2D portal,Texture2D bomba,Texture2D rec
             if (mapa[i][j] == ' ' || mapa[i][j] == 'M' || mapa[i][j] == 'J' || mapa[i][j] == 'C')
             {
                 DrawTexture(grama, j * LARGURA_BLOCO, i * ALTURA_BLOCO, WHITE);
-                //DrawRectangle(j * LARGURA_BLOCO, i * ALTURA_BLOCO, LARGURA_BLOCO, ALTURA_BLOCO, BROWN);
             }
         }
     }
@@ -277,7 +271,10 @@ void MovimentoInimigo(INIMIGO *Inimigo, int TAM, double tempo, int *n2)
                     mapa[(int)(Inimigo->y - 1)/ALTURA_BLOCO][(int)(Inimigo->x)/LARGURA_BLOCO] == 'H')
                 Inimigo->dy++;
 
-            if(mapa[(int)(Inimigo->y - 1)/ALTURA_BLOCO][(int)(Inimigo->x)/LARGURA_BLOCO] != 'W' && mapa[(int)(Inimigo->y + ALTURA_BLOCO)/ALTURA_BLOCO][(int)Inimigo->x/LARGURA_BLOCO] == 'W' || mapa[(int)(Inimigo->y - 1)/ALTURA_BLOCO][(int)(Inimigo->x)/LARGURA_BLOCO] != 'H' && mapa[(int)(Inimigo->y + ALTURA_BLOCO)/ALTURA_BLOCO][(int)Inimigo->x/LARGURA_BLOCO] == 'H')
+            if(mapa[(int)(Inimigo->y - 1)/ALTURA_BLOCO][(int)(Inimigo->x)/LARGURA_BLOCO] != 'W' &&
+               mapa[(int)(Inimigo->y + ALTURA_BLOCO)/ALTURA_BLOCO][(int)Inimigo->x/LARGURA_BLOCO] == 'W' ||
+               mapa[(int)(Inimigo->y - 1)/ALTURA_BLOCO][(int)(Inimigo->x)/LARGURA_BLOCO] != 'H' &&
+               mapa[(int)(Inimigo->y + ALTURA_BLOCO)/ALTURA_BLOCO][(int)Inimigo->x/LARGURA_BLOCO] == 'H')
                 Inimigo->dy--;
 
             Inimigo->y += Inimigo->dy * 20;
@@ -296,11 +293,8 @@ void MovimentoInimigo(INIMIGO *Inimigo, int TAM, double tempo, int *n2)
         }
     }
     char textoInimigosRestantes[50];
-    sprintf(textoInimigosRestantes, "Inimigos restantes: %d", TAM - *n2 + 2020879921);
+    sprintf(textoInimigosRestantes, "Inimigos restantes: %d", TAM - *n2);
     DrawText(textoInimigosRestantes, 500, 615, 25, BLACK);
-
-    printf("%d   ", *n2);
-
 }
 
 //---------função para desenhar o inimigo----------------//
@@ -310,7 +304,6 @@ void DesenhaInimigo(INIMIGO *Inimigo, int TAM,Texture2D inimigo)
     {
         if(Inimigo->vida==1)
             DrawTexture(inimigo, Inimigo->x, Inimigo->y, WHITE);
-        //DrawRectangle(Inimigo->x, Inimigo->y, LARGURA_BLOCO, ALTURA_BLOCO, RED);
         Inimigo++;
     }
 }
@@ -475,12 +468,11 @@ int main(void)
 
     JOGADOR Jogador = {0.0, 0.0};  // Inicializa a posi��o de J
     Jogador.vida = 1;
-    INIMIGO Inimigo[5];
+    INIMIGO Inimigo[50];
     double tempo = 0;
     GameScreen currentScreen = LOGO;
     int framesCounter = 0;
     int n=0,n2=0;
-    char matmapa[10];
     int faseAtual;
 
 //----------------setando FPS e tamanhho da janela do jogo-------------------//
@@ -623,8 +615,10 @@ int main(void)
                 CloseWindow();//fecha o jogo
             }
             n2 = 0;
-
+            Jogador.vida = 1;
+            Jogador.recurso = 0;
         }
+
         break;
         case JOGO:
         {
@@ -646,8 +640,7 @@ int main(void)
             if(botaopress(botaoFASE1) && IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
             {
                 faseAtual = 1;
-                strcpy(matmapa, "Mapas/mapaFASE1.txt");
-                carregaMapa(matmapa);
+                carregaMapa("Mapas/mapa1.txt");
                 InitPosicaoJogador(&Jogador);
                 InitPosicaoInimigo(Inimigo);
                 n = InitPosicaoInimigo(Inimigo);
@@ -660,8 +653,7 @@ int main(void)
             if(botaopress(botaoFASE2) && IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
             {
                 faseAtual = 2;
-                strcpy(matmapa, "Mapas/mapa1.txt");
-                carregaMapa(matmapa);
+                carregaMapa("Mapas/mapa2.txt");
                 InitPosicaoJogador(&Jogador);
                 InitPosicaoInimigo(Inimigo);
                 n = InitPosicaoInimigo(Inimigo);
@@ -765,7 +757,6 @@ int main(void)
 
             if(botaopress(botaoSAIR2) && IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
             {
-                //salva estado
                 CloseWindow();
             }
         }
@@ -803,6 +794,7 @@ int main(void)
             {
                 //salva no slot 3
 
+
                 SalvaJogo("Saves/TOWDEFSAVE3.bin", n, &Jogador, Inimigo, n2);
 
                 currentScreen = PAUSE;
@@ -814,6 +806,7 @@ int main(void)
             if(botaopress(botaoSAVE4) && IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
             {
                 //Salva no slot 4
+
 
                 SalvaJogo("Saves/TOWDEFSAVE4.bin", n, &Jogador, Inimigo, n2);
 
@@ -830,8 +823,6 @@ int main(void)
             {
                 currentScreen = TITULO;
             }
-
-
         }
         break;
         case FIM:
@@ -854,26 +845,6 @@ int main(void)
             {
                 //carrega no slot 1
 
-                /*FILE *save1;
-
-                if(!(save1 = fopen("Saves/TOWDEFSAVE1.bin","rb")))
-                    printf("ERRO AO LER ARQUIVO");
-
-                fread(&n, sizeof(int), 1, save1);
-
-                for (int i = 0; i < ALTURA_MAPA; ++i)
-                {
-                    fread(mapa[i], sizeof(int), LARGURA_MAPA, save1);
-                }
-
-                fread(&Jogador, sizeof(JOGADOR), 1, save1);
-
-                fread(&Inimigo, sizeof(INIMIGO), n, save1);
-
-                fread(&n2, sizeof(int), 1, save1);
-
-                fclose(save1);*/
-
                 CarregaJogo("Saves/TOWDEFSAVE1.bin", &n, &Jogador, Inimigo, &n2);
 
                 currentScreen = JOGO;//transfere para a tela de gameplay
@@ -886,26 +857,6 @@ int main(void)
             if(botaopress(botaoSAVE2) && IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
             {
                 //salva no slot 2
-
-                /*FILE *save2;
-
-                if(!(save2 = fopen("Saves/TOWDEFSAVE2.bin","rb")))
-                    printf("ERRO AO LER ARQUIVO");
-
-                fread(&n, sizeof(int), 1, save2);
-
-                for (int i = 0; i < ALTURA_MAPA; ++i)
-                {
-                    fread(mapa[i], sizeof(int), LARGURA_MAPA, save2);
-                }
-
-                fread(&Jogador, sizeof(JOGADOR), 1, save2);
-
-                fread(&Inimigo, sizeof(INIMIGO), n, save2);
-
-                fread(&n2, sizeof(int), 1, save2);
-
-                fclose(save2);*/
 
                 CarregaJogo("Saves/TOWDEFSAVE2.bin", &n, &Jogador, Inimigo, &n2);
 
@@ -920,25 +871,6 @@ int main(void)
             if(botaopress(botaoSAVE3) && IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
             {
                 //salva no slot 3
-                /*FILE *save3;
-
-                if(!(save3 = fopen("Saves/TOWDEFSAVE3.bin","rb")))
-                    printf("ERRO AO LER ARQUIVO");
-
-                fread(&n, sizeof(int), 1, save3);
-
-                for (int i = 0; i < ALTURA_MAPA; ++i)
-                {
-                    fread(mapa[i], sizeof(int), LARGURA_MAPA, save3);
-                }
-
-                fread(&Jogador, sizeof(JOGADOR), 1, save3);
-
-                fread(&Inimigo, sizeof(INIMIGO), n, save3);
-
-                fread(&n2, sizeof(int), 1, save3);
-
-                fclose(save3);*/
 
                 CarregaJogo("Saves/TOWDEFSAVE3.bin", &n, &Jogador, Inimigo, &n2);
 
@@ -951,25 +883,6 @@ int main(void)
             if(botaopress(botaoSAVE4) && IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
             {
                 //salva no slot 4
-                /*FILE *save4;
-
-                if(!(save4 = fopen("Saves/TOWDEFSAVE4.bin","rb")))
-                    printf("ERRO AO LER ARQUIVO");
-
-                fread(&n, sizeof(int), 1, save4);
-
-                for (int i = 0; i < ALTURA_MAPA; ++i)
-                {
-                    fread(mapa[i], sizeof(int), LARGURA_MAPA, save4);
-                }
-
-                fread(&Jogador, sizeof(JOGADOR), 1, save4);
-
-                fread(&Inimigo, sizeof(INIMIGO), n, save4);
-
-                fread(&n2, sizeof(int), 1, save4);
-
-                fclose(save4);*/
 
                 CarregaJogo("Saves/TOWDEFSAVE4.bin", &n, &Jogador, Inimigo, &n2);
 
@@ -990,16 +903,12 @@ int main(void)
             // TODO: Draw LOGO screen here!
             ClearBackground(DARKBLUE);
             DrawText("MEIA BOCA JUNIORS", 280, 250, 60, YELLOW);
-            //     DrawText("WAIT for 2 SECONDS...", 290, 220, 20, YELLOW);
-
         }
         break;
         case TITULO:
         {
             // TODO: Draw TITLE screen here!
             DrawRectangle(0, 0, LARGURA_MAPA * LARGURA_BLOCO, ALTURA_MAPA * ALTURA_BLOCO, DARKBLUE);
-            //DrawText("TITLE SCREEN", 20, 20, 40, DARKGREEN);
-            //DrawText("PRESS ENTER or TAP to JUMP to GAMEPLAY SCREEN", 120, 220, 20, DARKGREEN);
             DrawRectangleRec(botaoNOVOJ.rect, botaoNOVOJ.cor);
             DrawText("NOVO JOGO", botaoNOVOJ.rect.x + botaoNOVOJ.rect.width/2 - MeasureText("NOVO JOGO",20)/2, botaoNOVOJ.rect.y + botaoNOVOJ.rect.height/2 - 20/2,20, BLACK);
             DrawRectangleRec(botaoCARREGAR.rect, botaoCARREGAR.cor);
@@ -1017,23 +926,22 @@ int main(void)
             DesenhaMapa(parede,portal,bomba,recurso,base,grama,porta,chave);
 
 
-            DesenhaInimigo(Inimigo, 5, inimigo);
+            DesenhaInimigo(Inimigo, n, inimigo);
 
             DrawTexture(heroi, Jogador.x, Jogador.y, WHITE);
-            //DrawRectangle(Jogador.x, Jogador.y, LARGURA_BLOCO, ALTURA_BLOCO, DARKBLUE);
 
             MovimentoJogador(&Jogador);
 
-            MovimentoInimigo(Inimigo, 5, tempo, &n2);
+            MovimentoInimigo(Inimigo, n, tempo, &n2);
 
-            VidaJogador(&Jogador, Inimigo, 5);
+            VidaJogador(&Jogador, Inimigo, n);
 
             if(Jogador.vida <= 0)
             {
                 currentScreen = GAMEOVER;
                 Jogador.vida++;
             }
-            VidaBase(Inimigo, 5, &n2);
+            VidaBase(Inimigo, n, &n2);
             if(vidaBase <= 0)
             {
                 currentScreen = GAMEOVER;
@@ -1062,7 +970,6 @@ int main(void)
             DrawText("FASE 3", botaoFASE3.rect.x + botaoFASE3.rect.width/2 - MeasureText("FASE 3",20)/2, botaoFASE3.rect.y + botaoFASE3.rect.height/2 - 20/2,20, BLACK);
             DrawRectangleRec(botaoFASE4.rect, botaoFASE4.cor);
             DrawText("FASE 4", botaoFASE4.rect.x + botaoFASE4.rect.width/2 - MeasureText("FASE 4",20)/2, botaoFASE4.rect.y + botaoFASE4.rect.height/2 - 20/2,20, BLACK);
-
         }
         break;
         case PAUSE:

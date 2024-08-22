@@ -24,7 +24,7 @@ W          W W                                             W
 W          W W                                             W
 W          W W                                             W
 W          W WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW   W
-W          W                     M     M   M   M     M W   W
+W          W                           M   M   M     M W   W
 W          WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW W   W
 W                                                    W W   W
 WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
